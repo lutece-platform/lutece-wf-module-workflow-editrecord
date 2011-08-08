@@ -1,0 +1,72 @@
+<#include "/admin/util/editor/editor.html" />
+
+<div class="span-22 prepend-1 append-1 append-bottom">
+	<div class="portlet-background-header -lutece-border-radius-top">
+		#i18n{module.workflow.editrecord.edit_record.page_title}
+	</div>
+	<div class="portlet-background-content -lutece-border-radius-bottom">
+		<#if edit_record.message?? && edit_record.message != ''>
+			<p>
+				${edit_record.message}
+			</p>
+		</#if>
+		<form action="jsp/site/Portal.jsp" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="page" value="workflow-editrecord" />
+			<input type="hidden" name="id_record" value="${edit_record.idRecord}" />
+			<input type="hidden" name="id_task" value="${edit_record.idTask}" />
+			<input type="hidden" name="action" value="do_modify_record" />
+			<#if url_return?? && url_return != ''>
+				<input type="hidden" name="url_return" value="${url_return}" />
+			</#if>
+			<#if signature?? && signature != ''>
+				<input type="hidden" name="signature" value="${signature}" />
+			</#if>
+			<#if timestamp?? && timestamp != ''>
+				<input type="hidden" name="timestamp" value="${timestamp}" />
+			</#if>
+			<#list list_entries as entry>	
+				<#if entry.entryType.group>	
+					<fieldset class="form-fieldset"> 
+						<legend class="form-legend"> ${entry.title} </legend> 
+						<#if entry.children?has_content>
+      						<#list entry.children as child >
+      							<#assign entryKey=""+child.idEntry>	
+      							${child.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+      						</#list>
+      					</#if>
+      				</fieldset>		
+      			<#else>
+      				<#assign entryKey = "" + entry.idEntry>
+      				${entry.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+      			</#if>
+      		</#list>
+			<p>
+  				<input type="submit" value="#i18n{module.workflow.editrecord.edit_record.button_save}" class="-lutece-input -lutece-border-radius-mini" name="save" />
+   			</p>
+		</form>
+	</div>
+</div>
+
+<@initEditor />
+
+<script type="text/javascript">
+//for datepicker questions
+$( document ).ready( function (  ) {
+	var locale = "en-US";
+	if( document.getElementById( "locale" ) != null ) {
+		locale = document.getElementById( "locale" ).innerHTML;
+	}
+	$.datepicker.setDefaults( {
+		showOn: 'button', 
+		buttonImageOnly: true, 
+		buttonImage: 'js/jquery/plugins/ui/datepicker/calendar.png', 
+		buttonText: 'Calendar', 
+		showAnim: 'slideDown', 
+		speed: 'fast'
+	} );
+
+	$( ".datepicker-element" ).each( function( i ) {
+		$( this ).datepicker(  );
+	} );
+});
+</script>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- DAO -->
+	<bean id="workflow-editrecord.taskEditRecordConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfigDAO" />
+	<bean id="workflow-editrecord.editRecordDAO" class="fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordDAO" />
+	<bean id="workflow-editrecord.editRecordValueDAO" class="fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValueDAO" />
+
+	<!-- Services -->
+	<bean id="workflow-editrecord.taskEditRecordConfigService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.TaskEditRecordConfigService" />
+	<bean id="workflow-editrecord.editRecordValueService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordValueService" />
+	<bean id="workflow-editrecord.editRecordService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordService">
+		<property name="editRecordValueService" ref="workflow-editrecord.editRecordValueService" />
+	</bean>
+
+	<!-- Tasks -->
+	<bean id="workflow-editrecord.taskEditRecord" class="fr.paris.lutece.plugins.workflow.business.task.TaskType" >
+		<property name="key" value="taskEditRecord" />
+		<property name="titleI18nKey" value="module.workflow.editrecord.task_edit_record_title" />
+		<property name="className" value="fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecord"/>
+	</bean>
+	
+	<!-- TaskInfoProvider -->
+	<bean id="workflow-editrecord.editRecordTaskInfoProvider" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.taskinfo.EditRecordTaskInfoProvider">
+		<property name="taskType" ref="workflow-editrecord.taskEditRecord" />
+	</bean>
+	
+	<!-- SignRequest -->
+	<bean id="workflow-editrecord.hashService" class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
+	<bean id="workflow-editrecord.editRecordRequestAuthenticator" class="fr.paris.lutece.util.signrequest.RequestHashAuthenticator" >
+		<property name="hashService" ref="workflow-editrecord.hashService" />
+		<property name="signatureElements" > 
+			<list>
+				<value>id_record</value>
+				<value>id_task</value>
+			</list>
+		</property>
+		<property name="privateKey">
+			<value>change me</value>
+		</property>
+	  </bean>
+</beans>

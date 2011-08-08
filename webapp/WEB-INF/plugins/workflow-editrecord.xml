@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><plug-in>
+    <!-- Plugin Informations -->
+    <name>workflow-editrecord</name>
+    <class>fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordPlugin</class>
+    <version>1.0.0</version>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
+    <description>module.workflow.editrecord.module.description</description>
+    <provider>module.workflow.editrecord.module.provider</provider>
+    <provider-url>http://lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/plugins/workflow/modules/editrecord/editrecord.png</icon-url>
+    <copyright>Copyright 2001-2011 Mairie de Paris</copyright>
+	<core-version-dependency>
+		<min-core-version>3.0.0</min-core-version>
+		<max-core-version/>	
+	</core-version-dependency>
+	
+	<!-- if the plugin must have a connection pool with parameter : 1 - yes, 0 - no -->	
+    <db-pool-required>1</db-pool-required>
+
+	<!-- Xpage configuration -->
+    <applications>
+        <application>
+            <application-id>workflow-editrecord</application-id>
+            <application-class>fr.paris.lutece.plugins.workflow.modules.editrecord.web.EditRecordApp</application-class>
+        </application>
+    </applications>
+</plug-in>
