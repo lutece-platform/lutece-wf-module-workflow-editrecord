@@ -19,16 +19,35 @@
 		<input type="hidden" name="id_record" value="${id_record}" />
 		<label>#i18n{module.workflow.editrecord.task_edit_record_form.label_list_entries} : </label>
 		<#list list_entries as entry>
-			<#if !entry.entryType.group && !entry.entryType.comment> 
+			<#if !entry.entryType.comment>
 				<#if entry_index != 0>
 					<label>&nbsp;</label>
 				</#if>
-				<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
-					<#if edit_record?exists>
-						${getChecked( edit_record, entry.idEntry )}
+				<#if entry.entryType.group>
+					<#if entry.children?has_content>
+						<#list entry.children as child >
+							<#if child_index != 0>
+								<label>&nbsp;</label>
+							</#if>
+							<input type="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" 
+								<#if edit_record?exists>
+									${getChecked( edit_record, child.idEntry )}
+								</#if>
+							/>
+							${child.title}
+							<#if child_has_next>
+								<br />
+							</#if>
+						</#list>
 					</#if>
-				/>
-				${entry.title}
+				<#else>
+					<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
+						<#if edit_record?exists>
+							${getChecked( edit_record, entry.idEntry )}
+						</#if>
+					/>
+					${entry.title}
+				</#if>
 				<#if entry_has_next>
 					<br />
 				</#if>
