@@ -58,7 +58,6 @@ import fr.paris.lutece.plugins.workflow.business.task.TaskHome;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordHome;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
-import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValueHome;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.signrequest.EditRecordRequestAuthenticatorService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
@@ -180,7 +179,7 @@ public final class EditRecordService
         {
             EditRecordHome.update( editRecord );
             // Remove its edit record values first
-            _editRecordValueService.remove( editRecord.getIdRecord(  ) );
+            _editRecordValueService.remove( editRecord.getIdEditRecord(  ) );
 
             for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
             {
@@ -201,7 +200,7 @@ public final class EditRecordService
 
         if ( editRecord != null )
         {
-            editRecord.setListEditRecordValues( _editRecordValueService.find( nIdRecord ) );
+            editRecord.setListEditRecordValues( _editRecordValueService.find( editRecord.getIdEditRecord(  ) ) );
         }
 
         return editRecord;
@@ -214,7 +213,8 @@ public final class EditRecordService
      */
     public void removeByIdRecord( int nIdRecord, int nIdTask )
     {
-        EditRecordValueHome.remove( nIdRecord );
+        EditRecord editRecord = find( nIdRecord, nIdTask );
+        _editRecordValueService.remove( editRecord.getIdEditRecord(  ) );
         EditRecordHome.removeByIdRecord( nIdRecord, nIdTask );
     }
 
@@ -226,7 +226,7 @@ public final class EditRecordService
     {
         for ( EditRecord editRecord : EditRecordHome.findByIdTask( nIdTask ) )
         {
-            EditRecordValueHome.remove( editRecord.getIdRecord(  ) );
+            _editRecordValueService.remove( editRecord.getIdEditRecord(  ) );
         }
 
         EditRecordHome.removeByTask( nIdTask );
@@ -541,8 +541,8 @@ public final class EditRecordService
                                .executeActionAutomatic( nIdRecord, Record.WORKFLOW_RESOURCE_TYPE,
                     action.getWorkflow(  ).getId(  ), resourceWorkflow.getExternalParentId(  ) );
 
-                // Remove EditRecordValues
-                _editRecordValueService.remove( nIdRecord );
+                // Remove EditRecord and EditRecordValues
+                removeByIdRecord( nIdRecord, nIdTask );
             }
         }
     }

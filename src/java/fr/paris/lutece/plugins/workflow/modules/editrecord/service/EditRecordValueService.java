@@ -77,12 +77,12 @@ public final class EditRecordValueService
 
     /**
      * Find edit record values from a given id record
-     * @param nIdRecord the id record
+     * @param nIdEditRecord the id edit record
      * @return a list of EditRecordValue
      */
-    public List<EditRecordValue> find( int nIdRecord )
+    public List<EditRecordValue> find( int nIdEditRecord )
     {
-        return EditRecordValueHome.find( nIdRecord );
+        return EditRecordValueHome.find( nIdEditRecord );
     }
 
     /**
