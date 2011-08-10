@@ -49,7 +49,7 @@ import java.util.List;
 public final class TaskEditRecordConfigHome
 {
     private static final String BEAN_TASK_EDIT_RECORD_CONFIG_DAO = "workflow-editrecord.taskEditRecordConfigDAO";
-    private static final Plugin _plugin = PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME );
+    private static Plugin _plugin = PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME );
     private static ITaskEditRecordConfigDAO _dao = (ITaskEditRecordConfigDAO) SpringContextService.getPluginBean( EditRecordPlugin.PLUGIN_NAME,
             BEAN_TASK_EDIT_RECORD_CONFIG_DAO );
 
