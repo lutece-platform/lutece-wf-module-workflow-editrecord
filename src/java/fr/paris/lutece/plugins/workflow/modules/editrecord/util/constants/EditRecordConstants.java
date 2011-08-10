@@ -53,6 +53,8 @@ public final class EditRecordConstants
     public static final String PROPERTY_XPAGE_EDIT_RECORD_PAGETITLE = "module.workflow.editrecord.edit_record.page_title";
     public static final String PROPERTY_XPAGE_EDIT_RECORD_PATHLABEL = "module.workflow.editrecord.edit_record.page_label";
     public static final String PROPERTY_URL_RETURN = "workflow-editrecord.url_return";
+    public static final String PROPERTY_LUTECE_BASE_URL = "lutece.base.url";
+    public static final String PROPERTY_LUTECE_PROD_URL = "lutece.prod.url";
 
     // MARKS
     public static final String MARK_CONFIG = "config";

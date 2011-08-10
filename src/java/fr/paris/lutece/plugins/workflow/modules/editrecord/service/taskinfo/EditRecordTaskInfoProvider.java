@@ -108,7 +108,7 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
             String strTimestamp = Long.toString( new Date(  ).getTime(  ) );
             String strSignature = EditRecordRequestAuthenticatorService.getRequestAuthenticator(  )
                                                                        .buildSignature( listElements, strTimestamp );
-            StringBuilder sbUrl = new StringBuilder( AppPathService.getBaseUrl( request ) );
+            StringBuilder sbUrl = new StringBuilder( getBaseUrl( request ) );
 
             if ( !sbUrl.toString(  ).endsWith( EditRecordConstants.SLASH ) )
             {
@@ -138,5 +138,31 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
         }
 
         return strInfo;
+    }
+
+    /**
+     * Get the base url
+     * @param request the HTTP request
+     * @return the base url
+     */
+    private String getBaseUrl( HttpServletRequest request )
+    {
+        String strBaseUrl = StringUtils.EMPTY;
+
+        if ( request != null )
+        {
+            strBaseUrl = AppPathService.getBaseUrl( request );
+        }
+        else
+        {
+            strBaseUrl = AppPropertiesService.getProperty( EditRecordConstants.PROPERTY_LUTECE_BASE_URL );
+
+            if ( StringUtils.isBlank( strBaseUrl ) )
+            {
+                strBaseUrl = AppPropertiesService.getProperty( EditRecordConstants.PROPERTY_LUTECE_PROD_URL );
+            }
+        }
+
+        return strBaseUrl;
     }
 }
