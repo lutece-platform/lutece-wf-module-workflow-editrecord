@@ -110,10 +110,7 @@ public class EditRecordApp implements XPageApplication
                     }
                 }
 
-                if ( page == null )
-                {
-                    page = getEditRecordPage( request, nIdRecord, nIdTask );
-                }
+                page = getEditRecordPage( request, nIdRecord, nIdTask );
             }
             else
             {
