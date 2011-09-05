@@ -162,6 +162,7 @@ public final class EditRecordService
 
             for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
             {
+                editRecordValue.setIdEditRecord( editRecord.getIdEditRecord(  ) );
                 _editRecordValueService.create( editRecordValue );
             }
         }
@@ -183,6 +184,7 @@ public final class EditRecordService
 
             for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
             {
+                editRecordValue.setIdEditRecord( editRecord.getIdEditRecord(  ) );
                 _editRecordValueService.create( editRecordValue );
             }
         }

@@ -116,7 +116,6 @@ public class TaskEditRecord extends Task
                     {
                         int nIdEntry = Integer.parseInt( strIdEntry );
                         EditRecordValue editRecordValue = new EditRecordValue(  );
-                        editRecordValue.setIdEditRecord( nIdRecord );
                         editRecordValue.setIdEntry( nIdEntry );
 
                         listEditRecordValues.add( editRecordValue );

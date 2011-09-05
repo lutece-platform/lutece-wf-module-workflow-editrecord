@@ -36,9 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.editrecord.web;
 import fr.paris.lutece.plugins.directory.business.IEntry;
 import fr.paris.lutece.plugins.directory.business.RecordField;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
-import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordService;
-import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordValueService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -73,7 +71,6 @@ public class EditRecordApp implements XPageApplication
 
     // SERVICES
     private EditRecordService _editRecordService = EditRecordService.getService(  );
-    private EditRecordValueService _editRecordValueService = EditRecordValueService.getService(  );
 
     /**
      * {@inheritDoc}
@@ -140,13 +137,13 @@ public class EditRecordApp implements XPageApplication
     {
         XPage page = null;
         EditRecord editRecord = _editRecordService.find( nIdRecord, nIdTask );
-        List<EditRecordValue> listEditRecordValues = _editRecordValueService.find( nIdRecord );
 
-        if ( ( editRecord != null ) && ( listEditRecordValues != null ) && ( listEditRecordValues.size(  ) > 0 ) )
+        if ( editRecord != null )
         {
             page = new XPage(  );
 
-            List<IEntry> listEntries = _editRecordService.getListEntriesToEdit( request, listEditRecordValues );
+            List<IEntry> listEntries = _editRecordService.getListEntriesToEdit( request,
+                    editRecord.getListEditRecordValues(  ) );
             Map<String, List<RecordField>> mapRecordFields = _editRecordService.getMapIdEntryListRecordField( listEntries,
                     nIdRecord );
 
