@@ -452,21 +452,20 @@ public final class EditRecordService
     /**
      * Do edit the record data
      * @param request the HTTP request
-     * @param nIdRecord the id record
+     * @param editRecord the edit record
      * @throws SiteMessageException site message if there is a problem
      */
-    public void doEditRecordData( HttpServletRequest request, int nIdRecord )
+    public void doEditRecordData( HttpServletRequest request, EditRecord editRecord )
         throws SiteMessageException
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-        Record record = RecordHome.findByPrimaryKey( nIdRecord, pluginDirectory );
+        Record record = RecordHome.findByPrimaryKey( editRecord.getIdRecord(  ), pluginDirectory );
 
         if ( record != null )
         {
-            List<EditRecordValue> listEditRecordValues = _editRecordValueService.find( nIdRecord );
-            List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, listEditRecordValues );
-
-            List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, nIdRecord, listEditRecordValues );
+            List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues(  ) );
+            List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, editRecord.getIdRecord(  ),
+                    editRecord.getListEditRecordValues(  ) );
 
             try
             {

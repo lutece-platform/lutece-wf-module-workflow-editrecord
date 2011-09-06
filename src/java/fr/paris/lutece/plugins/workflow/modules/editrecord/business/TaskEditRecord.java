@@ -193,8 +193,12 @@ public class TaskEditRecord extends Task
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( EditRecordConstants.MARK_CONFIG, config );
         model.put( EditRecordConstants.MARK_EDIT_RECORD, editRecord );
-        model.put( EditRecordConstants.MARK_LIST_ENTRIES,
-            EditRecordService.getService(  ).getInformationListEntries( editRecord.getIdRecord(  ) ) );
+
+        if ( editRecord != null )
+        {
+            model.put( EditRecordConstants.MARK_LIST_ENTRIES,
+                EditRecordService.getService(  ).getInformationListEntries( editRecord.getIdRecord(  ) ) );
+        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_RECORD_INFORMATION, locale, model );
 

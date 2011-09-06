@@ -188,8 +188,13 @@ public class EditRecordApp implements XPageApplication
         throws SiteMessageException
     {
         // Modify record data
-        _editRecordService.doEditRecordData( request, nIdRecord );
-        // Change record state
-        _editRecordService.doChangeRecordState( nIdRecord, nIdTask, request.getLocale(  ) );
+        EditRecord editRecord = _editRecordService.find( nIdRecord, nIdTask );
+
+        if ( editRecord != null )
+        {
+            _editRecordService.doEditRecordData( request, editRecord );
+            // Change record state
+            _editRecordService.doChangeRecordState( nIdRecord, nIdTask, request.getLocale(  ) );
+        }
     }
 }
