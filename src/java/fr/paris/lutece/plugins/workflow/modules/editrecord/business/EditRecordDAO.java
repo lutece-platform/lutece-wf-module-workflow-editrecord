@@ -47,55 +47,31 @@ import java.util.List;
  */
 public class EditRecordDAO implements IEditRecordDAO
 {
-    private static final String SQL_QUERY_NEW_PK = " SELECT max( id_edit_record ) FROM task_edit_record ";
-    private static final String SQL_QUERY_SELECT = " SELECT id_edit_record, id_record, id_task, message " +
-        " FROM task_edit_record WHERE id_record = ? AND id_task = ? ";
-    private static final String SQL_QUERY_SELECT_BY_ID_TASK = " SELECT id_edit_record, id_record, id_task, message " +
+    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_task, message, is_complete " +
+        " FROM task_edit_record WHERE id_history = ? AND id_task = ? ";
+    private static final String SQL_QUERY_SELECT_BY_ID_TASK = " SELECT id_history, id_record, id_task, message, is_complete " +
         " FROM task_edit_record WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record ( id_edit_record, id_record, id_task, message ) " +
+    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record ( id_history, id_task, message, is_complete ) " +
         " VALUES ( ?,?,?,? ) ";
-    private static final String SQL_QUERY_DELETE_BY_ID_RECORD = " DELETE FROM task_edit_record WHERE id_record = ? AND id_task = ? ";
+    private static final String SQL_QUERY_DELETE_BY_ID_HISTORY = " DELETE FROM task_edit_record WHERE id_history = ? AND id_task = ? ";
     private static final String SQL_QUERY_DELETE_BY_TASK = " DELETE FROM task_edit_record WHERE id_task = ? ";
-    private static final String SQL_QUERY_UPDATE = " UPDATE task_edit_record SET message = ? WHERE id_record = ? AND id_task = ? ";
+    private static final String SQL_QUERY_UPDATE = " UPDATE task_edit_record SET message = ?, is_complete = ? WHERE id_history = ? AND id_task = ? ";
 
     /**
      * {@inheritDoc}
      */
-    public int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery(  );
-
-        int nKey = 1;
-
-        if ( daoUtil.next(  ) )
-        {
-            nKey = daoUtil.getInt( 1 ) + 1;
-        }
-
-        daoUtil.free(  );
-
-        return nKey;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized int insert( EditRecord editRecord, Plugin plugin )
+    public synchronized void insert( EditRecord editRecord, Plugin plugin )
     {
         int nIndex = 1;
-        editRecord.setIdEditRecord( newPrimaryKey( plugin ) );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setInt( nIndex++, editRecord.getIdEditRecord(  ) );
-        daoUtil.setInt( nIndex++, editRecord.getIdRecord(  ) );
+        daoUtil.setInt( nIndex++, editRecord.getIdHistory(  ) );
         daoUtil.setInt( nIndex++, editRecord.getIdTask(  ) );
         daoUtil.setString( nIndex++, editRecord.getMessage(  ) );
+        daoUtil.setBoolean( nIndex++, editRecord.isComplete(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
-
-        return editRecord.getIdEditRecord(  );
     }
 
     /**
@@ -108,8 +84,9 @@ public class EditRecordDAO implements IEditRecordDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
 
         daoUtil.setString( nIndex++, editRecord.getMessage(  ) );
+        daoUtil.setBoolean( nIndex++, editRecord.isComplete(  ) );
 
-        daoUtil.setInt( nIndex++, editRecord.getIdRecord(  ) );
+        daoUtil.setInt( nIndex++, editRecord.getIdHistory(  ) );
         daoUtil.setInt( nIndex++, editRecord.getIdTask(  ) );
 
         daoUtil.executeUpdate(  );
@@ -119,13 +96,13 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
-    public EditRecord load( int nIdRecord, int nIdTask, Plugin plugin )
+    public EditRecord load( int nIdHistory, int nIdTask, Plugin plugin )
     {
         EditRecord editRecord = null;
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
         int nIndex = 1;
-        daoUtil.setInt( nIndex++, nIdRecord );
+        daoUtil.setInt( nIndex++, nIdHistory );
         daoUtil.setInt( nIndex++, nIdTask );
 
         daoUtil.executeQuery(  );
@@ -135,10 +112,10 @@ public class EditRecordDAO implements IEditRecordDAO
             nIndex = 1;
 
             editRecord = new EditRecord(  );
-            editRecord.setIdEditRecord( daoUtil.getInt( nIndex++ ) );
-            editRecord.setIdRecord( daoUtil.getInt( nIndex++ ) );
+            editRecord.setIdHistory( daoUtil.getInt( nIndex++ ) );
             editRecord.setIdTask( daoUtil.getInt( nIndex++ ) );
             editRecord.setMessage( daoUtil.getString( nIndex++ ) );
+            editRecord.setIsComplete( daoUtil.getBoolean( nIndex++ ) );
         }
 
         daoUtil.free(  );
@@ -162,10 +139,10 @@ public class EditRecordDAO implements IEditRecordDAO
             int nIndex = 1;
 
             EditRecord editRecord = new EditRecord(  );
-            editRecord.setIdEditRecord( daoUtil.getInt( nIndex++ ) );
-            editRecord.setIdRecord( daoUtil.getInt( nIndex++ ) );
+            editRecord.setIdHistory( daoUtil.getInt( nIndex++ ) );
             editRecord.setIdTask( daoUtil.getInt( nIndex++ ) );
             editRecord.setMessage( daoUtil.getString( nIndex++ ) );
+            editRecord.setIsComplete( daoUtil.getBoolean( nIndex++ ) );
             listEditRecords.add( editRecord );
         }
 
@@ -177,11 +154,11 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
-    public void deleteByIdRecord( int nIdRecord, int nIdTask, Plugin plugin )
+    public void deleteByIdHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_RECORD, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_HISTORY, plugin );
         int nIndex = 1;
-        daoUtil.setInt( nIndex++, nIdRecord );
+        daoUtil.setInt( nIndex++, nIdHistory );
         daoUtil.setInt( nIndex++, nIdTask );
 
         daoUtil.executeUpdate(  );
@@ -191,7 +168,7 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
-    public void deleteByTask( int nIdTask, Plugin plugin )
+    public void deleteByIdTask( int nIdTask, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
         daoUtil.setInt( 1, nIdTask );

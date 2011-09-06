@@ -71,20 +71,20 @@ public final class EditRecordValueHome
 
     /**
      * Remove EditRecordValue
-     * @param nIdEditRecord the id edit record
+     * @param nIdHistory the id history
      */
-    public static void remove( int nIdEditRecord )
+    public static void remove( int nIdHistory )
     {
-        _dao.delete( nIdEditRecord, _plugin );
+        _dao.delete( nIdHistory, _plugin );
     }
 
     /**
      * Load the EditRecordValue Object
-     * @param nIdEditRecord the id edit record
+     * @param nIdHistory the id history
      * @return a list of EditRecordValue
      */
-    public static List<EditRecordValue> find( int nIdEditRecord )
+    public static List<EditRecordValue> find( int nIdHistory )
     {
-        return _dao.load( nIdEditRecord, _plugin );
+        return _dao.load( nIdHistory, _plugin );
     }
 }

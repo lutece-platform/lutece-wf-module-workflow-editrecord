@@ -47,11 +47,11 @@ import java.util.List;
  */
 public class EditRecordValueDAO implements IEditRecordValueDAO
 {
-    private static final String SQL_QUERY_SELECT = " SELECT id_edit_record, id_entry " +
-        " FROM task_edit_record_value WHERE id_edit_record = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record_value (id_edit_record, id_entry ) " +
+    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry " +
+        " FROM task_edit_record_value WHERE id_history = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record_value (id_history, id_entry ) " +
         " VALUES ( ?,? ) ";
-    private static final String SQL_QUERY_DELETE = " DELETE FROM task_edit_record_value WHERE id_edit_record = ? ";
+    private static final String SQL_QUERY_DELETE = " DELETE FROM task_edit_record_value WHERE id_history = ? ";
 
     /**
      * {@inheritDoc}
@@ -61,7 +61,7 @@ public class EditRecordValueDAO implements IEditRecordValueDAO
         int nIndex = 1;
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setInt( nIndex++, editRecordValue.getIdEditRecord(  ) );
+        daoUtil.setInt( nIndex++, editRecordValue.getIdHistory(  ) );
         daoUtil.setInt( nIndex++, editRecordValue.getIdEntry(  ) );
 
         daoUtil.executeUpdate(  );
@@ -71,12 +71,12 @@ public class EditRecordValueDAO implements IEditRecordValueDAO
     /**
      * {@inheritDoc}
      */
-    public List<EditRecordValue> load( int nIdEditRecord, Plugin plugin )
+    public List<EditRecordValue> load( int nIdHistory, Plugin plugin )
     {
         List<EditRecordValue> listEditRecordValues = new ArrayList<EditRecordValue>(  );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nIdEditRecord );
+        daoUtil.setInt( 1, nIdHistory );
 
         daoUtil.executeQuery(  );
 
@@ -85,7 +85,7 @@ public class EditRecordValueDAO implements IEditRecordValueDAO
             int nIndex = 1;
 
             EditRecordValue editRecordValue = new EditRecordValue(  );
-            editRecordValue.setIdEditRecord( daoUtil.getInt( nIndex++ ) );
+            editRecordValue.setIdHistory( daoUtil.getInt( nIndex++ ) );
             editRecordValue.setIdEntry( daoUtil.getInt( nIndex++ ) );
 
             listEditRecordValues.add( editRecordValue );
@@ -99,10 +99,10 @@ public class EditRecordValueDAO implements IEditRecordValueDAO
     /**
      * {@inheritDoc}
      */
-    public void delete( int nIdEditRecord, Plugin plugin )
+    public void delete( int nIdHistory, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nIdEditRecord );
+        daoUtil.setInt( 1, nIdHistory );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );

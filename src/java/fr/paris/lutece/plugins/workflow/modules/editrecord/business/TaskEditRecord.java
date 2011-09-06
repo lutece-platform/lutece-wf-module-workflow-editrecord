@@ -47,7 +47,6 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
@@ -87,58 +86,50 @@ public class TaskEditRecord extends Task
      */
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Plugin plugin, Locale locale )
     {
-        String strIdRecord = request.getParameter( EditRecordConstants.PARAMETER_ID_RECORD );
         String strMessage = request.getParameter( EditRecordConstants.PARAMETER_MESSAGE +
                 EditRecordConstants.UNDERSCORE + getId(  ) );
         String[] listIdsEntry = request.getParameterValues( EditRecordConstants.PARAMETER_IDS_ENTRY +
                 EditRecordConstants.UNDERSCORE + getId(  ) );
 
-        if ( StringUtils.isNotBlank( strIdRecord ) && StringUtils.isNumeric( strIdRecord ) )
+        boolean bCreate = false;
+        List<EditRecordValue> listEditRecordValues = new ArrayList<EditRecordValue>(  );
+
+        EditRecord editRecord = EditRecordService.getService(  ).find( nIdResourceHistory, getId(  ) );
+
+        if ( editRecord == null )
         {
-            boolean bCreate = false;
-            List<EditRecordValue> listEditRecordValues = new ArrayList<EditRecordValue>(  );
-            int nIdRecord = Integer.parseInt( strIdRecord );
+            editRecord = new EditRecord(  );
+            editRecord.setIdHistory( nIdResourceHistory );
+            editRecord.setIdTask( getId(  ) );
+            bCreate = true;
+        }
 
-            EditRecord editRecord = EditRecordService.getService(  ).find( nIdRecord, getId(  ) );
-
-            if ( editRecord == null )
+        if ( listIdsEntry != null )
+        {
+            for ( String strIdEntry : listIdsEntry )
             {
-                editRecord = new EditRecord(  );
-                editRecord.setIdTask( getId(  ) );
-                bCreate = true;
-            }
-
-            if ( listIdsEntry != null )
-            {
-                for ( String strIdEntry : listIdsEntry )
+                if ( StringUtils.isNotBlank( strIdEntry ) && StringUtils.isNumeric( strIdEntry ) )
                 {
-                    if ( StringUtils.isNotBlank( strIdEntry ) && StringUtils.isNumeric( strIdEntry ) )
-                    {
-                        int nIdEntry = Integer.parseInt( strIdEntry );
-                        EditRecordValue editRecordValue = new EditRecordValue(  );
-                        editRecordValue.setIdEntry( nIdEntry );
+                    int nIdEntry = Integer.parseInt( strIdEntry );
+                    EditRecordValue editRecordValue = new EditRecordValue(  );
+                    editRecordValue.setIdEntry( nIdEntry );
 
-                        listEditRecordValues.add( editRecordValue );
-                    }
+                    listEditRecordValues.add( editRecordValue );
                 }
             }
+        }
 
-            editRecord.setMessage( StringUtils.isNotBlank( strMessage ) ? strMessage : StringUtils.EMPTY );
-            editRecord.setIdRecord( nIdRecord );
-            editRecord.setListEditRecordValues( listEditRecordValues );
+        editRecord.setMessage( StringUtils.isNotBlank( strMessage ) ? strMessage : StringUtils.EMPTY );
+        editRecord.setListEditRecordValues( listEditRecordValues );
+        editRecord.setIsComplete( false );
 
-            if ( bCreate )
-            {
-                EditRecordService.getService(  ).create( editRecord );
-            }
-            else
-            {
-                EditRecordService.getService(  ).update( editRecord );
-            }
+        if ( bCreate )
+        {
+            EditRecordService.getService(  ).create( editRecord );
         }
         else
         {
-            throw new AppException( "TaskEditRecord Error : ID record not valid" );
+            EditRecordService.getService(  ).update( editRecord );
         }
     }
 
@@ -168,14 +159,11 @@ public class TaskEditRecord extends Task
         Plugin plugin, Locale locale )
     {
         TaskEditRecordConfig config = TaskEditRecordConfigService.getService(  ).findByPrimaryKey( getId(  ) );
-        EditRecord editRecord = EditRecordService.getService(  ).find( nIdResource, getId(  ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( EditRecordConstants.MARK_ID_RECORD, nIdResource );
         model.put( EditRecordConstants.MARK_CONFIG, config );
         model.put( EditRecordConstants.MARK_LIST_ENTRIES,
             EditRecordService.getService(  ).getFormListEntries( nIdResource, getId(  ), request ) );
-        model.put( EditRecordConstants.MARK_EDIT_RECORD, editRecord );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_RECORD_FORM, locale, model );
 
@@ -197,7 +185,7 @@ public class TaskEditRecord extends Task
         if ( editRecord != null )
         {
             model.put( EditRecordConstants.MARK_LIST_ENTRIES,
-                EditRecordService.getService(  ).getInformationListEntries( editRecord.getIdRecord(  ) ) );
+                EditRecordService.getService(  ).getInformationListEntries( nIdHistory ) );
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_RECORD_INFORMATION, locale, model );
@@ -225,7 +213,6 @@ public class TaskEditRecord extends Task
         {
             XmlUtil.beginElement( sbXml, EditRecordConstants.TAG_EDIT_RECORD );
             XmlUtil.addElement( sbXml, EditRecordConstants.TAG_MESSAGE, editRecord.getMessage(  ) );
-            XmlUtil.addElement( sbXml, EditRecordConstants.TAG_ID_RECORD, editRecord.getIdRecord(  ) );
             XmlUtil.beginElement( sbXml, EditRecordConstants.TAG_LIST_IDS_ENTRY );
 
             for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )

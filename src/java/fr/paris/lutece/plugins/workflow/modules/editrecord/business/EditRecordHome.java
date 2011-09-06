@@ -63,11 +63,10 @@ public final class EditRecordHome
     /**
      * Creation of an instance of edit record
      * @param editRecord The instance of EditRecord
-     * @return the newly create EditRecord primary key
      */
-    public static int create( EditRecord editRecord )
+    public static void create( EditRecord editRecord )
     {
-        return _dao.insert( editRecord, _plugin );
+        _dao.insert( editRecord, _plugin );
     }
 
     /**
@@ -81,32 +80,32 @@ public final class EditRecordHome
 
     /**
      * Remove EditRecord by id record
-     * @param nIdRecord the id record
+     * @param nIdHistory the id history
      * @param nIdTask The task key
      */
-    public static void removeByIdRecord( int nIdRecord, int nIdTask )
+    public static void removeByIdHistory( int nIdHistory, int nIdTask )
     {
-        _dao.deleteByIdRecord( nIdRecord, nIdTask, _plugin );
+        _dao.deleteByIdHistory( nIdHistory, nIdTask, _plugin );
     }
 
     /**
      * Remove EditRecord by task
      * @param nIdTask The task key
      */
-    public static void removeByTask( int nIdTask )
+    public static void removeByIdTask( int nIdTask )
     {
-        _dao.deleteByTask( nIdTask, _plugin );
+        _dao.deleteByIdTask( nIdTask, _plugin );
     }
 
     /**
      * Load the EditRecord Object
-     * @param nIdRecord the history id
+     * @param nIdHistory the history id
      * @param nIdTask the task id
      * @return the EditRecord Object
      */
-    public static EditRecord find( int nIdRecord, int nIdTask )
+    public static EditRecord find( int nIdHistory, int nIdTask )
     {
-        return _dao.load( nIdRecord, nIdTask, _plugin );
+        return _dao.load( nIdHistory, nIdTask, _plugin );
     }
 
     /**

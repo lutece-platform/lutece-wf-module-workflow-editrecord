@@ -41,25 +41,25 @@ package fr.paris.lutece.plugins.workflow.modules.editrecord.business;
  */
 public class EditRecordValue
 {
-    private int _nIdEditRecord;
+    private int _nIdHistory;
     private int _nIdEntry;
 
     /**
-    * Get the id edit record
-    * @return the id edit record
+    * Get the id history
+    * @return the id history
     */
-    public int getIdEditRecord(  )
+    public int getIdHistory(  )
     {
-        return _nIdEditRecord;
+        return _nIdHistory;
     }
 
     /**
-     * Set the id edit record
-     * @param nIdEditRecord the id edit record
+     * Set the id history
+     * @param nIdHistory the id history
      */
-    public void setIdEditRecord( int nIdEditRecord )
+    public void setIdHistory( int nIdHistory )
     {
-        _nIdEditRecord = nIdEditRecord;
+        _nIdHistory = nIdHistory;
     }
 
     /**

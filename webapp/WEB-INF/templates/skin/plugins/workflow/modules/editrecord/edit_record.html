@@ -12,7 +12,7 @@
 		</#if>
 		<form action="jsp/site/Portal.jsp" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="page" value="workflow-editrecord" />
-			<input type="hidden" name="id_record" value="${edit_record.idRecord}" />
+			<input type="hidden" name="id_history" value="${edit_record.idHistory}" />
 			<input type="hidden" name="id_task" value="${edit_record.idTask}" />
 			<input type="hidden" name="action" value="do_modify_record" />
 			<#if url_return?? && url_return != ''>

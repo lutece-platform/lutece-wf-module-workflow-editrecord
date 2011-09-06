@@ -102,7 +102,7 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
         if ( resourceHistory != null )
         {
             List<String> listElements = new ArrayList<String>(  );
-            listElements.add( Integer.toString( resourceHistory.getIdResource(  ) ) );
+            listElements.add( Integer.toString( nIdHistory ) );
             listElements.add( Integer.toString( nIdTask ) );
 
             String strTimestamp = Long.toString( new Date(  ).getTime(  ) );
@@ -117,7 +117,7 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
 
             UrlItem url = new UrlItem( sbUrl.toString(  ) + JSP_SITE_PORTAL );
             url.addParameter( XPageAppService.PARAM_XPAGE_APP, EditRecordPlugin.PLUGIN_NAME );
-            url.addParameter( EditRecordConstants.PARAMETER_ID_RECORD, resourceHistory.getIdResource(  ) );
+            url.addParameter( EditRecordConstants.PARAMETER_ID_HISTORY, nIdHistory );
             url.addParameter( EditRecordConstants.PARAMETER_ID_TASK, nIdTask );
             url.addParameter( EditRecordConstants.PARAMETER_SIGNATURE, strSignature );
             url.addParameter( EditRecordConstants.PARAMETER_TIMESTAMP, strTimestamp );

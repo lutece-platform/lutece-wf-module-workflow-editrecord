@@ -74,6 +74,7 @@ public final class EditRecordConstants
     public static final String PARAMETER_MESSAGE = "message";
     public static final String PARAMETER_IDS_ENTRY = "ids_entry";
     public static final String PARAMETER_ID_RECORD = "id_record";
+    public static final String PARAMETER_ID_HISTORY = "id_history";
     public static final String PARAMETER_ID_STATE = "id_state";
     public static final String PARAMETER_ID_TASK = "id_task";
     public static final String PARAMETER_ACTION = "action";

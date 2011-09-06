@@ -46,19 +46,11 @@ import java.util.List;
 public interface IEditRecordDAO
 {
     /**
-     * Get a new primary key
-     * @param plugin the plugin
-     * @return the new primary key
-     */
-    int newPrimaryKey( Plugin plugin );
-
-    /**
      * Insert new record
      * @param editRecord the EditRecord Object
      * @param plugin the plugin
-     * @return the newly create EditRecord primary key
      */
-    int insert( EditRecord editRecord, Plugin plugin );
+    void insert( EditRecord editRecord, Plugin plugin );
 
     /**
      * Insert new record
@@ -68,13 +60,13 @@ public interface IEditRecordDAO
     void store( EditRecord editRecord, Plugin plugin );
 
     /**
-     * Load a EditRecord by id record
-     * @param nIdRecord the id record
+     * Load a EditRecord by id history
+     * @param nIdHistory the id history
      * @param nIdTask the task id
      * @param plugin the plugin
      * @return EditRecord Object
      */
-    EditRecord load( int nIdRecord, int nIdTask, Plugin plugin );
+    EditRecord load( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Load a list of EditRecord by id task
@@ -85,17 +77,17 @@ public interface IEditRecordDAO
     List<EditRecord> loadByIdTask( int nIdTask, Plugin plugin );
 
     /**
-     * Remove EditRecord by id record
-     * @param nIdRecord the id record
+     * Remove EditRecord by id history
+     * @param nIdHistory the id history
      * @param nIdTask the task id
      * @param plugin the plugin
      */
-    void deleteByIdRecord( int nIdRecord, int nIdTask, Plugin plugin );
+    void deleteByIdHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove EditRecord by id task
      * @param nIdTask the task id
      * @param plugin the plugin
      */
-    void deleteByTask( int nIdTask, Plugin plugin );
+    void deleteByIdTask( int nIdTask, Plugin plugin );
 }

@@ -43,46 +43,28 @@ import java.util.List;
  */
 public class EditRecord
 {
-    private int _nIdEditRecord;
-    private int _nIdRecord;
+    private int _nIdHistory;
     private int _nIdTask;
     private String _strMessage;
+    private boolean _bIsComplete;
     private List<EditRecordValue> _listEditRecordValues;
 
     /**
      * Set the id edit record
-     * @param nIdEditRecord the id edit record
+     * @param nIdHistory the id edit record
      */
-    public void setIdEditRecord( int nIdEditRecord )
+    public void setIdHistory( int nIdHistory )
     {
-        _nIdEditRecord = nIdEditRecord;
+        _nIdHistory = nIdHistory;
     }
 
     /**
      * Get the id edit record
      * @return the id edit record
      */
-    public int getIdEditRecord(  )
+    public int getIdHistory(  )
     {
-        return _nIdEditRecord;
-    }
-
-    /**
-     * Set the id record
-     * @param nIdRecord the id record
-     */
-    public void setIdRecord( int nIdRecord )
-    {
-        _nIdRecord = nIdRecord;
-    }
-
-    /**
-     * Get the id record
-     * @return the id record
-     */
-    public int getIdRecord(  )
-    {
-        return _nIdRecord;
+        return _nIdHistory;
     }
 
     /**
@@ -137,5 +119,23 @@ public class EditRecord
     public List<EditRecordValue> getListEditRecordValues(  )
     {
         return _listEditRecordValues;
+    }
+
+    /**
+     * Set is complete
+     * @param bIsComplete true if it is complete, false otherwise
+     */
+    public void setIsComplete( boolean bIsComplete )
+    {
+        _bIsComplete = bIsComplete;
+    }
+
+    /**
+     * Check if the record is complete
+     * @return true if it is complete, false otherwise
+     */
+    public boolean isComplete(  )
+    {
+        return _bIsComplete;
     }
 }

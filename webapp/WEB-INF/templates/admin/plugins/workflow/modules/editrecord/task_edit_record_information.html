@@ -4,6 +4,14 @@
 	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_message} : </label>
 	    	${edit_record.message}
 	    	<br />
+	    	<br />
+	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_is_complete} : </label>
+	    	<#if edit_record.isComplete(  )>
+	    		#i18n{module.workflow.editrecord.task_edit_record_information.label_completed}
+	    	<#else>
+	    		#i18n{module.workflow.editrecord.task_edit_record_information.label_not_completed}
+	    	</#if>
+	    	<br />
 	    </#if>
 	    <#if list_entries?exists && list_entries?has_content>
 	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_list_entries} :</label>

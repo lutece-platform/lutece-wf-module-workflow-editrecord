@@ -54,16 +54,16 @@ public interface IEditRecordValueDAO
 
     /**
      * Load a EditRecordValue by id edit record
-     * @param nIdEditRecord the id edit record
+     * @param nIdHistory the id history
      * @param plugin the plugin
      * @return a list of EditRecordValue
      */
-    List<EditRecordValue> load( int nIdEditRecord, Plugin plugin );
+    List<EditRecordValue> load( int nIdHistory, Plugin plugin );
 
     /**
      * Remove by id edit record
-     * @param nIdEditRecord the id edit record
+     * @param nIdHistory the id history
      * @param plugin the plugin
      */
-    void delete( int nIdEditRecord, Plugin plugin );
+    void delete( int nIdHistory, Plugin plugin );
 }

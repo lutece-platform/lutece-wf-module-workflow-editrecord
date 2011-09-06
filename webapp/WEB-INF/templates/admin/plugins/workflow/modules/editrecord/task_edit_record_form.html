@@ -1,22 +1,5 @@
-<#function getChecked edit_record id_entry>
-	<#if edit_record.listEditRecordValues?? && edit_record.listEditRecordValues?has_content>
-		<#list edit_record.listEditRecordValues as edit_record_value>
-			<#if edit_record_value.idEntry = id_entry>
-				<#return "checked='checked'">
-			</#if>
-		</#list> 
-	</#if>
-	<#return "">
-</#function>
-
-<#assign message="">
-<#if edit_record?exists>
-	<#assign message = edit_record.message>
-</#if>
-
 <#if config?exists>
 	<p>
-		<input type="hidden" name="id_record" value="${id_record}" />
 		<label>#i18n{module.workflow.editrecord.task_edit_record_form.label_list_entries} : </label>
 		<#assign index = 0>
 		<#list list_entries as entry>
@@ -33,22 +16,14 @@
 									<br />
 									<label>&nbsp;</label>
 								</#if>
-								<input type="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" 
-									<#if edit_record?exists>
-										${getChecked( edit_record, child.idEntry )}
-									</#if>
-								/>
+								<input type="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" />
 								${child.title}
 							</#if>
 						</#list>
 					</#if>
 				<#else>
 					<#if entry.shownInCompleteness>
-						<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
-							<#if edit_record?exists>
-								${getChecked( edit_record, entry.idEntry )}
-							</#if>
-						/>
+						<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" />
 						${entry.title}
 					</#if>
 				</#if>
@@ -57,6 +32,6 @@
 		</#list>
 		<br />
 		<label for="message_${config.idTask}">#i18n{module.workflow.editrecord.task_edit_record_form.label_message} : </label>
-		<textarea rows="4" cols="80" name="message_${config.idTask}">${message}</textarea>
+		<textarea rows="4" cols="80" name="message_${config.idTask}"></textarea>
 	</p>
 </#if>

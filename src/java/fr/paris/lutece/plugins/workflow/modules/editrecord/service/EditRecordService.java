@@ -150,24 +150,19 @@ public final class EditRecordService
     /**
      * Create an edit record
      * @param editRecord the edit record
-     * @return the newly created edit record primary key
      */
-    public int create( EditRecord editRecord )
+    public void create( EditRecord editRecord )
     {
-        int nKey = DirectoryUtils.CONSTANT_ID_NULL;
-
         if ( editRecord != null )
         {
-            nKey = EditRecordHome.create( editRecord );
+            EditRecordHome.create( editRecord );
 
             for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
             {
-                editRecordValue.setIdEditRecord( editRecord.getIdEditRecord(  ) );
+                editRecordValue.setIdHistory( editRecord.getIdHistory(  ) );
                 _editRecordValueService.create( editRecordValue );
             }
         }
-
-        return nKey;
     }
 
     /**
@@ -180,11 +175,11 @@ public final class EditRecordService
         {
             EditRecordHome.update( editRecord );
             // Remove its edit record values first
-            _editRecordValueService.remove( editRecord.getIdEditRecord(  ) );
+            _editRecordValueService.remove( editRecord.getIdHistory(  ) );
 
             for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
             {
-                editRecordValue.setIdEditRecord( editRecord.getIdEditRecord(  ) );
+                editRecordValue.setIdHistory( editRecord.getIdHistory(  ) );
                 _editRecordValueService.create( editRecordValue );
             }
         }
@@ -192,17 +187,17 @@ public final class EditRecordService
 
     /**
      * Find an edit record
-     * @param nIdRecord the id record
+     * @param nIdHistory the id history
      * @param nIdTask the id task
      * @return a edit record
      */
-    public EditRecord find( int nIdRecord, int nIdTask )
+    public EditRecord find( int nIdHistory, int nIdTask )
     {
-        EditRecord editRecord = EditRecordHome.find( nIdRecord, nIdTask );
+        EditRecord editRecord = EditRecordHome.find( nIdHistory, nIdTask );
 
         if ( editRecord != null )
         {
-            editRecord.setListEditRecordValues( _editRecordValueService.find( editRecord.getIdEditRecord(  ) ) );
+            editRecord.setListEditRecordValues( _editRecordValueService.find( editRecord.getIdHistory(  ) ) );
         }
 
         return editRecord;
@@ -210,14 +205,14 @@ public final class EditRecordService
 
     /**
      * Remove an edit record
-     * @param nIdRecord the id record
+     * @param nIdHistory the id history
      * @param nIdTask the id task
      */
-    public void removeByIdRecord( int nIdRecord, int nIdTask )
+    public void removeByIdHistory( int nIdHistory, int nIdTask )
     {
-        EditRecord editRecord = find( nIdRecord, nIdTask );
-        _editRecordValueService.remove( editRecord.getIdEditRecord(  ) );
-        EditRecordHome.removeByIdRecord( nIdRecord, nIdTask );
+        EditRecord editRecord = find( nIdHistory, nIdTask );
+        _editRecordValueService.remove( editRecord.getIdHistory(  ) );
+        EditRecordHome.removeByIdHistory( nIdHistory, nIdTask );
     }
 
     /**
@@ -228,10 +223,10 @@ public final class EditRecordService
     {
         for ( EditRecord editRecord : EditRecordHome.findByIdTask( nIdTask ) )
         {
-            _editRecordValueService.remove( editRecord.getIdEditRecord(  ) );
+            _editRecordValueService.remove( editRecord.getIdHistory(  ) );
         }
 
-        EditRecordHome.removeByTask( nIdTask );
+        EditRecordHome.removeByIdTask( nIdTask );
     }
 
     // GET
@@ -288,12 +283,12 @@ public final class EditRecordService
 
     /**
      * Get the list of entries for information
-     * @param nIdEditRecord the id edit record
+     * @param nIdHistory the id edit record
      * @return a list of entries
      */
-    public List<IEntry> getInformationListEntries( int nIdEditRecord )
+    public List<IEntry> getInformationListEntries( int nIdHistory )
     {
-        List<EditRecordValue> listEditRecordValues = EditRecordValueService.getService(  ).find( nIdEditRecord );
+        List<EditRecordValue> listEditRecordValues = _editRecordValueService.find( nIdHistory );
         List<IEntry> listEntries = new ArrayList<IEntry>(  );
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
 
@@ -437,14 +432,15 @@ public final class EditRecordService
     /**
      * Get the map id entry - list record fields
      * @param listEntries the list of entries to edit
-     * @param nIdRecord the id record
+     * @param nIdHistory the id history
      * @return a map of id entry - list record fields
      */
-    public Map<String, List<RecordField>> getMapIdEntryListRecordField( List<IEntry> listEntries, int nIdRecord )
+    public Map<String, List<RecordField>> getMapIdEntryListRecordField( List<IEntry> listEntries, int nIdHistory )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+        Record record = getRecordFromIdHistory( nIdHistory );
 
-        return DirectoryUtils.getMapIdEntryListRecordField( listEntries, nIdRecord, pluginDirectory );
+        return DirectoryUtils.getMapIdEntryListRecordField( listEntries, record.getIdRecord(  ), pluginDirectory );
     }
 
     // DO
@@ -459,12 +455,13 @@ public final class EditRecordService
         throws SiteMessageException
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-        Record record = RecordHome.findByPrimaryKey( editRecord.getIdRecord(  ), pluginDirectory );
+
+        Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
 
         if ( record != null )
         {
             List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues(  ) );
-            List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, editRecord.getIdRecord(  ),
+            List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, record.getIdRecord(  ),
                     editRecord.getListEditRecordValues(  ) );
 
             try
@@ -504,15 +501,15 @@ public final class EditRecordService
 
     /**
      * Do change the record state
-     * @param nIdRecord the id record
-     * @param nIdTask the id task
+     * @param editRecord edit record
      * @param locale the locale
      */
-    public void doChangeRecordState( int nIdRecord, int nIdTask, Locale locale )
+    public void doChangeRecordState( EditRecord editRecord, Locale locale )
     {
         Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-        ITask task = TaskHome.findByPrimaryKey( nIdTask, pluginWorkflow, locale );
-        TaskEditRecordConfig config = TaskEditRecordConfigService.getService(  ).findByPrimaryKey( nIdTask );
+        ITask task = TaskHome.findByPrimaryKey( editRecord.getIdTask(  ), pluginWorkflow, locale );
+        TaskEditRecordConfig config = TaskEditRecordConfigService.getService(  )
+                                                                 .findByPrimaryKey( editRecord.getIdTask(  ) );
 
         if ( ( task != null ) && ( config != null ) )
         {
@@ -521,9 +518,11 @@ public final class EditRecordService
 
             if ( ( state != null ) && ( action != null ) )
             {
+                Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
+
                 // Create Resource History
                 ResourceHistory resourceHistory = new ResourceHistory(  );
-                resourceHistory.setIdResource( nIdRecord );
+                resourceHistory.setIdResource( record.getIdRecord(  ) );
                 resourceHistory.setResourceType( Record.WORKFLOW_RESOURCE_TYPE );
                 resourceHistory.setAction( action );
                 resourceHistory.setWorkFlow( action.getWorkflow(  ) );
@@ -532,20 +531,27 @@ public final class EditRecordService
                 ResourceHistoryHome.create( resourceHistory, pluginWorkflow );
 
                 // Update Resource
-                ResourceWorkflow resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( nIdRecord,
+                ResourceWorkflow resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( record.getIdRecord(  ),
                         Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ), pluginWorkflow );
                 resourceWorkflow.setState( state );
                 ResourceWorkflowHome.update( resourceWorkflow, pluginWorkflow );
 
                 // if new state have action automatic
                 WorkflowService.getInstance(  )
-                               .executeActionAutomatic( nIdRecord, Record.WORKFLOW_RESOURCE_TYPE,
+                               .executeActionAutomatic( record.getIdRecord(  ), Record.WORKFLOW_RESOURCE_TYPE,
                     action.getWorkflow(  ).getId(  ), resourceWorkflow.getExternalParentId(  ) );
-
-                // Remove EditRecord and EditRecordValues
-                removeByIdRecord( nIdRecord, nIdTask );
             }
         }
+    }
+
+    /**
+     * Do change the edit record to complete
+     * @param editRecord the edit record
+     */
+    public void doCompleteEditRecord( EditRecord editRecord )
+    {
+        editRecord.setIsComplete( true );
+        update( editRecord );
     }
 
     // CHECK
@@ -558,5 +564,28 @@ public final class EditRecordService
     public boolean isRequestAuthenticated( HttpServletRequest request )
     {
         return EditRecordRequestAuthenticatorService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
+    }
+
+    /**
+     * Get the record from a given id history
+     * @param nIdHistory the id history
+     * @return the record
+     */
+    private Record getRecordFromIdHistory( int nIdHistory )
+    {
+        Record record = null;
+        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
+        ResourceHistory resourceHistory = ResourceHistoryHome.findByPrimaryKey( nIdHistory, pluginWorkflow );
+
+        if ( ( resourceHistory != null ) &&
+                Record.WORKFLOW_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        {
+            Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+
+            // Record
+            record = RecordHome.findByPrimaryKey( resourceHistory.getIdResource(  ), pluginDirectory );
+        }
+
+        return record;
     }
 }

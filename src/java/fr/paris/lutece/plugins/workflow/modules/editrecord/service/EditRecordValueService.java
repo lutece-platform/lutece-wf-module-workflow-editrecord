@@ -76,21 +76,21 @@ public final class EditRecordValueService
     }
 
     /**
-     * Find edit record values from a given id record
-     * @param nIdEditRecord the id edit record
+     * Find edit record values from a given id history
+     * @param nIdHistory the id history
      * @return a list of EditRecordValue
      */
-    public List<EditRecordValue> find( int nIdEditRecord )
+    public List<EditRecordValue> find( int nIdHistory )
     {
-        return EditRecordValueHome.find( nIdEditRecord );
+        return EditRecordValueHome.find( nIdHistory );
     }
 
     /**
      * Remove EditRecordValue from a given id edit record
-     * @param nIdEditRecord the id edit record
+     * @param nIdHistory the id history
      */
-    public void remove( int nIdEditRecord )
+    public void remove( int nIdHistory )
     {
-        EditRecordValueHome.remove( nIdEditRecord );
+        EditRecordValueHome.remove( nIdHistory );
     }
 }

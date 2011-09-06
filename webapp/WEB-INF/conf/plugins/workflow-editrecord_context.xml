@@ -32,7 +32,7 @@
 		<property name="hashService" ref="workflow-editrecord.hashService" />
 		<property name="signatureElements" > 
 			<list>
-				<value>id_record</value>
+				<value>id_history</value>
 				<value>id_task</value>
 			</list>
 		</property>
