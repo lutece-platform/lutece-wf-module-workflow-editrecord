@@ -33,8 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service;
 
+import fr.paris.lutece.plugins.blobstoreclient.service.BlobStoreClientWebService;
 import fr.paris.lutece.plugins.directory.business.EntryFilter;
 import fr.paris.lutece.plugins.directory.business.EntryHome;
+import fr.paris.lutece.plugins.directory.business.EntryType;
+import fr.paris.lutece.plugins.directory.business.EntryTypeDownloadUrl;
+import fr.paris.lutece.plugins.directory.business.EntryTypeHome;
+import fr.paris.lutece.plugins.directory.business.Field;
 import fr.paris.lutece.plugins.directory.business.IEntry;
 import fr.paris.lutece.plugins.directory.business.PhysicalFile;
 import fr.paris.lutece.plugins.directory.business.PhysicalFileHome;
@@ -60,6 +65,7 @@ import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordHo
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.signrequest.EditRecordRequestAuthenticatorService;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.util.UrlUtils;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
 import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
 import fr.paris.lutece.plugins.workflow.service.WorkflowService;
@@ -75,7 +81,9 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -95,6 +103,7 @@ public final class EditRecordService
 {
     private static final String BEAN_EDIT_RECORD_SERVICE = "workflow-editrecord.editRecordService";
     private EditRecordValueService _editRecordValueService;
+    private BlobStoreClientWebService _blobStoreClientWS;
 
     /**
      * Private constructor
@@ -143,6 +152,15 @@ public final class EditRecordService
     public void setEditRecordValueService( EditRecordValueService editRecordValueService )
     {
         _editRecordValueService = editRecordValueService;
+    }
+
+    /**
+     * Set the blobstore client web service
+     * @param blobStoreClientWebService the blob store client web service
+     */
+    public void setBlobStoreClientWebService( BlobStoreClientWebService blobStoreClientWebService )
+    {
+        _blobStoreClientWS = blobStoreClientWebService;
     }
 
     // CRUD
@@ -204,6 +222,16 @@ public final class EditRecordService
     }
 
     /**
+     * Find edit records by a given id task
+     * @param nIdTask the id task
+     * @return the list of edit records
+     */
+    public List<EditRecord> findByIdTask( int nIdTask )
+    {
+        return EditRecordHome.findByIdTask( nIdTask );
+    }
+
+    /**
      * Remove an edit record
      * @param nIdHistory the id history
      * @param nIdTask the id task
@@ -221,7 +249,7 @@ public final class EditRecordService
      */
     public void removeByIdTask( int nIdTask )
     {
-        for ( EditRecord editRecord : EditRecordHome.findByIdTask( nIdTask ) )
+        for ( EditRecord editRecord : findByIdTask( nIdTask ) )
         {
             _editRecordValueService.remove( editRecord.getIdHistory(  ) );
         }
@@ -443,6 +471,162 @@ public final class EditRecordService
         return DirectoryUtils.getMapIdEntryListRecordField( listEntries, record.getIdRecord(  ), pluginDirectory );
     }
 
+    /**
+     * Get the entry from a given id entry
+     * @param nIdEntry the id entry
+     * @return an {@link IEntry}
+     */
+    public IEntry getEntry( int nIdEntry )
+    {
+        Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+
+        return EntryHome.findByPrimaryKey( nIdEntry, pluginDirectory );
+    }
+
+    /**
+     * Get the entry type download url
+     * @return the entry type downlaod url
+     */
+    public EntryType getEntryTypeDownloadUrl(  )
+    {
+        EntryType entryTypeDownloadUrl = null;
+        Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+
+        for ( EntryType entryType : EntryTypeHome.getList( pluginDirectory ) )
+        {
+            if ( EntryTypeDownloadUrl.class.getName(  ).equals( entryType.getClassName(  ) ) )
+            {
+                entryTypeDownloadUrl = entryType;
+
+                break;
+            }
+        }
+
+        return entryTypeDownloadUrl;
+    }
+
+    /**
+     * Get the record from a given id history
+     * @param nIdHistory the id history
+     * @return the record
+     */
+    public Record getRecordFromIdHistory( int nIdHistory )
+    {
+        Record record = null;
+        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
+        ResourceHistory resourceHistory = ResourceHistoryHome.findByPrimaryKey( nIdHistory, pluginWorkflow );
+
+        if ( ( resourceHistory != null ) &&
+                Record.WORKFLOW_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        {
+            Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+
+            // Record
+            record = RecordHome.findByPrimaryKey( resourceHistory.getIdResource(  ), pluginDirectory );
+        }
+
+        return record;
+    }
+
+    /**
+     * Get the record field from a given id history and id entry
+     * @param nIdHistory the id history
+     * @param nIdEntry the id entry
+     * @return the record field
+     */
+    public RecordField getRecordField( int nIdHistory, int nIdEntry )
+    {
+        RecordField recordField = null;
+        Record record = getRecordFromIdHistory( nIdHistory );
+
+        if ( record != null )
+        {
+            Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+            RecordFieldFilter recordFieldFilter = new RecordFieldFilter(  );
+            recordFieldFilter.setIdDirectory( record.getDirectory(  ).getIdDirectory(  ) );
+            recordFieldFilter.setIdEntry( nIdEntry );
+            recordFieldFilter.setIdRecord( record.getIdRecord(  ) );
+
+            List<RecordField> listRecordFields = RecordFieldHome.getRecordFieldList( recordFieldFilter, pluginDirectory );
+            record.setListRecordField( listRecordFields );
+
+            if ( ( record.getListRecordField(  ) != null ) && !record.getListRecordField(  ).isEmpty(  ) )
+            {
+                recordField = record.getListRecordField(  ).get( 0 );
+            }
+        }
+
+        return recordField;
+    }
+
+    /**
+     * Get the file name from a given url
+     * @param strUrl the url
+     * @return the file name
+     * @throws HttpAccessException Exception if there is an HTTP issue
+     */
+    public String getFileName( String strUrl ) throws HttpAccessException
+    {
+        return _blobStoreClientWS.getFileName( strUrl );
+    }
+
+    /**
+     * Get the file name from a given edit record and id entry
+     * @param editRecord the edit record
+     * @param nIdEntry the id entry
+     * @return the file name
+     */
+    public String getFileName( EditRecord editRecord, int nIdEntry )
+    {
+        String strFileName = StringUtils.EMPTY;
+
+        for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
+        {
+            if ( editRecordValue.getIdEntry(  ) == nIdEntry )
+            {
+                strFileName = editRecordValue.getFileName(  );
+
+                break;
+            }
+        }
+
+        return strFileName;
+    }
+
+    /**
+     * Get the WS rest url of the given entry
+     * @param entry the entry
+     * @return the WS rest url
+     */
+    public String getWSRestUrl( IEntry entry )
+    {
+        return getFieldValue( entry, EntryTypeDownloadUrl.CONSTANT_WS_REST_URL );
+    }
+
+    /**
+     * Get the BlobStore service name of the given entry
+     * @param entry the entry
+     * @return the BlobStore service name
+     */
+    public String getBlobStoreName( IEntry entry )
+    {
+        return getFieldValue( entry, EntryTypeDownloadUrl.CONSTANT_BLOBSTORE );
+    }
+
+    /**
+     * Get the file url
+     * @param strBaseUrl the base url
+     * @param strBlobKey the blob key
+     * @param strBlobStore the blobstore service name
+     * @return the file url
+     * @throws HttpAccessException Exception if there is an HTTP issue
+     */
+    public String getFileUrl( String strBaseUrl, String strBlobKey, String strBlobStore )
+        throws HttpAccessException
+    {
+        return _blobStoreClientWS.getFileUrl( strBaseUrl, strBlobKey, strBlobStore );
+    }
+
     // DO
 
     /**
@@ -554,6 +738,59 @@ public final class EditRecordService
         update( editRecord );
     }
 
+    /**
+     * Do remove a file from a given edit record and entry
+     * @param editRecord the edit record
+     * @param entry the entry
+     * @throws HttpAccessException Exception if there is an HTTP issue
+     */
+    public void doRemoveFile( EditRecord editRecord, IEntry entry )
+        throws HttpAccessException
+    {
+        for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
+        {
+            if ( editRecordValue.getIdEntry(  ) == entry.getIdEntry(  ) )
+            {
+                doRemoveFile( editRecordValue, entry );
+
+                break;
+            }
+        }
+    }
+
+    /**
+     * Do edit the value of the record field
+     * @param nIdHistory the id history
+     * @param nIdEntry the id entry
+     * @param strRecordFieldValue the record field value
+     */
+    public void doEditRecordField( int nIdHistory, int nIdEntry, String strRecordFieldValue )
+    {
+        RecordField recordField = getRecordField( nIdHistory, nIdEntry );
+
+        if ( recordField != null )
+        {
+            recordField.setValue( strRecordFieldValue );
+
+            Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+            RecordFieldHome.update( recordField, pluginDirectory );
+        }
+    }
+
+    /**
+     * Do upload a file in the blobstore webapp
+     * @param strBaseUrl the base url
+     * @param fileItem the file
+     * @param strBlobStore the blobstore service name
+     * @return the blob key of the uploaded file
+     * @throws HttpAccessException Exception if there is an HTTP issue
+     */
+    public String doUploadFile( String strBaseUrl, FileItem fileItem, String strBlobStore )
+        throws HttpAccessException
+    {
+        return _blobStoreClientWS.doUploadFile( strBaseUrl, fileItem, strBlobStore );
+    }
+
     // CHECK
 
     /**
@@ -566,26 +803,69 @@ public final class EditRecordService
         return EditRecordRequestAuthenticatorService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
     }
 
+    // PRIVATE METHODS
+
     /**
-     * Get the record from a given id history
-     * @param nIdHistory the id history
-     * @return the record
+     * Get the field value of the entry from a given field title
+     * @param entry the entry
+     * @param strFieldTitle field title
+     * @return the field value
      */
-    private Record getRecordFromIdHistory( int nIdHistory )
+    private String getFieldValue( IEntry entry, String strFieldTitle )
     {
-        Record record = null;
-        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-        ResourceHistory resourceHistory = ResourceHistoryHome.findByPrimaryKey( nIdHistory, pluginWorkflow );
+        String strFieldValue = StringUtils.EMPTY;
 
-        if ( ( resourceHistory != null ) &&
-                Record.WORKFLOW_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( entry instanceof EntryTypeDownloadUrl && ( entry.getFields(  ) != null ) &&
+                !entry.getFields(  ).isEmpty(  ) && StringUtils.isNotBlank( strFieldTitle ) )
         {
-            Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+            for ( Field field : entry.getFields(  ) )
+            {
+                if ( strFieldTitle.equals( field.getTitle(  ) ) )
+                {
+                    strFieldValue = field.getValue(  );
 
-            // Record
-            record = RecordHome.findByPrimaryKey( resourceHistory.getIdResource(  ), pluginDirectory );
+                    break;
+                }
+            }
         }
 
-        return record;
+        return strFieldValue;
+    }
+
+    /**
+     * Do remove a file
+     * @param editRecordValue the edit record value
+     * @param entry the entry
+     * @throws HttpAccessException Exception if there is an HTTP issue
+     */
+    private void doRemoveFile( EditRecordValue editRecordValue, IEntry entry )
+        throws HttpAccessException
+    {
+        RecordField recordField = getRecordField( editRecordValue.getIdHistory(  ), entry.getIdEntry(  ) );
+
+        if ( recordField != null )
+        {
+            // Get the download file url
+            String strDownloadFileUrl = entry.convertRecordFieldTitleToString( recordField, null, false );
+
+            if ( StringUtils.isNotBlank( strDownloadFileUrl ) )
+            {
+                // Parse the download file url to fetch the parameters
+                Map<String, List<String>> mapParameters = UrlUtils.getMapParametersFromUrl( strDownloadFileUrl );
+                List<String> parameterBlobKey = mapParameters.get( EditRecordConstants.PARAMETER_BLOB_KEY );
+                List<String> parameterBlobStore = mapParameters.get( EditRecordConstants.PARAMETER_BLOBSTORE );
+
+                if ( ( parameterBlobKey != null ) && !parameterBlobKey.isEmpty(  ) && ( parameterBlobStore != null ) &&
+                        !parameterBlobStore.isEmpty(  ) )
+                {
+                    String strBlobKey = parameterBlobKey.get( 0 );
+                    String strBlobStore = parameterBlobStore.get( 0 );
+                    _blobStoreClientWS.doDeleteFile( getWSRestUrl( entry ), strBlobStore, strBlobKey );
+
+                    // Update the record field
+                    doEditRecordField( editRecordValue.getIdHistory(  ), entry.getIdEntry(  ), StringUtils.EMPTY );
+                }
+            }
+        }
     }
 }

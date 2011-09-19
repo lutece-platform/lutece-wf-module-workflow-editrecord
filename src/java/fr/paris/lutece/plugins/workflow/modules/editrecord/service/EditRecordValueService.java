@@ -33,9 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service;
 
+import fr.paris.lutece.plugins.directory.business.EntryTypeDownloadUrl;
+import fr.paris.lutece.plugins.directory.business.IEntry;
+import fr.paris.lutece.plugins.directory.business.RecordField;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValueHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.httpaccess.HttpAccessException;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
@@ -48,6 +55,7 @@ import java.util.List;
 public final class EditRecordValueService
 {
     private static final String BEAN_EDIT_RECORD_VALUE_SERVICE = "workflow-editrecord.editRecordValueService";
+    private EditRecordService _editRecordService;
 
     /**
      * Private constructor
@@ -67,6 +75,15 @@ public final class EditRecordValueService
     }
 
     /**
+     * Set the edit record service
+     * @param editRecordService the edit record service
+     */
+    public void setEditRecordService( EditRecordService editRecordService )
+    {
+        _editRecordService = editRecordService;
+    }
+
+    /**
      * Create a new edit record value
      * @param editRecordValue the edit record value
      */
@@ -82,7 +99,14 @@ public final class EditRecordValueService
      */
     public List<EditRecordValue> find( int nIdHistory )
     {
-        return EditRecordValueHome.find( nIdHistory );
+        List<EditRecordValue> listEditRecordValues = EditRecordValueHome.find( nIdHistory );
+
+        for ( EditRecordValue editRecordValue : listEditRecordValues )
+        {
+            editRecordValue.setFileName( getFileName( editRecordValue ) );
+        }
+
+        return listEditRecordValues;
     }
 
     /**
@@ -92,5 +116,41 @@ public final class EditRecordValueService
     public void remove( int nIdHistory )
     {
         EditRecordValueHome.remove( nIdHistory );
+    }
+
+    /**
+     * Get the file name
+     * @param editRecordValue the edit record value
+     * @return the file name
+     */
+    public String getFileName( EditRecordValue editRecordValue )
+    {
+        String strFileName = StringUtils.EMPTY;
+        IEntry entry = _editRecordService.getEntry( editRecordValue.getIdEntry(  ) );
+
+        if ( ( entry != null ) && entry instanceof EntryTypeDownloadUrl )
+        {
+            RecordField recordField = _editRecordService.getRecordField( editRecordValue.getIdHistory(  ),
+                    editRecordValue.getIdEntry(  ) );
+
+            if ( recordField != null )
+            {
+                String strUrl = entry.convertRecordFieldTitleToString( recordField, null, false );
+
+                if ( StringUtils.isNotBlank( strUrl ) )
+                {
+                    try
+                    {
+                        strFileName = _editRecordService.getFileName( strUrl );
+                    }
+                    catch ( HttpAccessException e )
+                    {
+                        AppLogService.error( e );
+                    }
+                }
+            }
+        }
+
+        return strFileName;
     }
 }

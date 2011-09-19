@@ -27,4 +27,24 @@
             <application-class>fr.paris.lutece.plugins.workflow.modules.editrecord.web.EditRecordApp</application-class>
         </application>
     </applications>
+    
+    <!-- Specific plugin CSS stylesheets -->
+    <css-stylesheets>
+    	<scope>xpage</scope>
+        <css-stylesheet>workflow/modules/editrecord/uploadify/uploadify.css</css-stylesheet>
+    </css-stylesheets>
+    
+    <!-- Specific plugin JAVASCRIPT -->
+	<javascript-files>
+        <javascript-files-scope>xpage</javascript-files-scope>
+        <javascript-file>workflow/modules/editrecord/uploadify/jquery.uploadify.v2.1.4.min.js</javascript-file>
+    </javascript-files>
+    <javascript-files>
+        <javascript-files-scope>xpage</javascript-files-scope>
+        <javascript-file>workflow/modules/editrecord/uploadify/swfobject.js</javascript-file>
+    </javascript-files>
+    <javascript-files>
+        <javascript-files-scope>xpage</javascript-files-scope>
+        <javascript-file>workflow/modules/editrecord/editrecord.js</javascript-file>
+    </javascript-files>
 </plug-in>

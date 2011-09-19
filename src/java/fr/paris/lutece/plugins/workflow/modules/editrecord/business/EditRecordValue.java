@@ -43,6 +43,7 @@ public class EditRecordValue
 {
     private int _nIdHistory;
     private int _nIdEntry;
+    private String _strFileName;
 
     /**
     * Get the id history
@@ -78,5 +79,23 @@ public class EditRecordValue
     public void setIdEntry( int nIdEntry )
     {
         _nIdEntry = nIdEntry;
+    }
+
+    /**
+     * Get the file item
+     * @return the file item
+     */
+    public String getFileName(  )
+    {
+        return _strFileName;
+    }
+
+    /**
+     * Set the file item
+     * @param strFileName the file item
+     */
+    public void setFileName( String strFileName )
+    {
+        _strFileName = strFileName;
     }
 }

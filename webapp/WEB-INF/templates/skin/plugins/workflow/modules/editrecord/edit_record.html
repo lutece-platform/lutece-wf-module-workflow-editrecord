@@ -1,5 +1,16 @@
 <#include "/admin/util/editor/editor.html" />
 
+<#function getFileName edit_record id_entry>
+	<#if edit_record?? && edit_record.listEditRecordValues?has_content>
+		<#list edit_record.listEditRecordValues as edit_record_value>
+			<#if edit_record_value.idEntry == id_entry>
+				<#return edit_record_value.fileName>
+			</#if>
+		</#list>
+	</#if>
+	<#return "">
+</#function>
+
 <div class="span-22 prepend-1 append-1 append-bottom">
 	<div class="portlet-background-header -lutece-border-radius-top">
 		#i18n{module.workflow.editrecord.edit_record.page_title}
@@ -24,8 +35,8 @@
 			<#if timestamp?? && timestamp != ''>
 				<input type="hidden" name="timestamp" value="${timestamp}" />
 			</#if>
-			<#list list_entries as entry>	
-				<#if entry.entryType.group>	
+			<#list list_entries as entry>
+				<#if entry.entryType.group>
 					<fieldset class="form-fieldset"> 
 						<legend class="form-legend"> ${entry.title} </legend> 
 						<#if entry.children?has_content>
@@ -34,7 +45,60 @@
       							${child.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
       						</#list>
       					</#if>
-      				</fieldset>		
+      				</fieldset>
+      			<#elseif entry_type_download_url.idType == entry.entryType.idType>
+      				<#assign entryKey = "" + entry.idEntry>
+					<#assign default_values = map_id_entry_list_record_field[entryKey]>
+					<#assign value = "">
+					<#list entry.fields as field>
+						<#if field.value?exists && !default_values?has_content >
+							<#assign value = "${field.value}"> 
+					 	<#elseif default_values?has_content>
+							<#list default_values as default_value>
+								<#assign value = "${default_value.entry.convertRecordFieldValueToString(default_value,locale,false,false)}">
+							</#list>
+						</#if>
+					</#list>
+      				<div class="form-element">
+						<span class="form-label">
+							<label for="${entry.idEntry}">	
+								${entry.title}
+								<#if entry.mandatory>
+									*
+								</#if>
+								 : 
+							</label>
+						</span>
+						<span class="form-field-column">
+							<input type="file" name="${entry.idEntry}" id="${entry.idEntry}" value="" />
+						</span>
+						<#if entry.helpMessage?exists&&entry.helpMessage != ''>
+							<span class="form-help">
+								<a class="info" href="javascript:void;"><img  src="images/admin/skin/plugins/directory/help.gif" />
+									<span><pre> ${entry.helpMessage}</pre></span>
+								</a>
+							</span>
+						</#if>
+					</div>
+					<div class="form-element">
+						<span class="form-label">
+							<label>&nbsp;</label>
+						</span>
+						<span class="form-field-column">
+							<input type="submit" name="_editrecord_upload_submit_${entry.idEntry}" id="_editrecord_upload_submit_${entry.idEntry}" value="#i18n{module.workflow.editrecord.edit_record.button_transmit}" />
+						</span>
+					</div>
+					<div id="_editrecord_uploaded_file_${entry.idEntry}" class="form-element">
+						<#if value?has_content && value != ''>
+							<span class="form-label">
+								<label>#i18n{module.workflow.editrecord.edit_record.transmitted_files} : </label>
+							</span>
+							<span class="form-field-column">
+								&nbsp;${getFileName( edit_record, entry.idEntry )}
+								<input type="submit" name="_editrecord_upload_delete_${entry.idEntry}" id="_editrecord_upload_delete_${entry.idEntry}" value="#i18n{module.workflow.editrecord.edit_record.button_delete}" />
+							</span>
+						</#if>
+					</div>
       			<#else>
       				<#assign entryKey = "" + entry.idEntry>
       				${entry.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
@@ -48,25 +112,25 @@
 </div>
 
 <@initEditor />
-
 <script type="text/javascript">
-//for datepicker questions
-$( document ).ready( function (  ) {
-	var locale = "en-US";
-	if( document.getElementById( "locale" ) != null ) {
-		locale = document.getElementById( "locale" ).innerHTML;
-	}
-	$.datepicker.setDefaults( {
-		showOn: 'button', 
-		buttonImageOnly: true, 
-		buttonImage: 'js/jquery/plugins/ui/datepicker/calendar.png', 
-		buttonText: 'Calendar', 
-		showAnim: 'slideDown', 
-		speed: 'fast'
-	} );
-
-	$( ".datepicker-element" ).each( function( i ) {
-		$( this ).datepicker(  );
-	} );
-});
+	var baseUrl = "${base_url}";
+	//for datepicker questions
+	$( document ).ready( function (  ) {
+		var locale = "en-US";
+		if( document.getElementById( "locale" ) != null ) {
+			locale = document.getElementById( "locale" ).innerHTML;
+		}
+		$.datepicker.setDefaults( {
+			showOn: 'button', 
+			buttonImageOnly: true, 
+			buttonImage: 'js/jquery/plugins/ui/datepicker/calendar.png', 
+			buttonText: 'Calendar', 
+			showAnim: 'slideDown', 
+			speed: 'fast'
+		} );
+	
+		$( ".datepicker-element" ).each( function( i ) {
+			$( this ).datepicker(  );
+		} );
+	});
 </script>
