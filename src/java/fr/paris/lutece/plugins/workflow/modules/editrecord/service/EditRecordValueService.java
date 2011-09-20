@@ -130,7 +130,7 @@ public final class EditRecordValueService
 
         if ( ( entry != null ) && entry instanceof EntryTypeDownloadUrl )
         {
-            RecordField recordField = _editRecordService.getRecordField( editRecordValue.getIdHistory(  ),
+            RecordField recordField = _editRecordService.getRecordFieldDownloadUrl( editRecordValue.getIdHistory(  ),
                     editRecordValue.getIdEntry(  ) );
 
             if ( recordField != null )

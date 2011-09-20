@@ -529,14 +529,14 @@ public final class EditRecordService
     }
 
     /**
-     * Get the record field from a given id history and id entry
+     * Get the list of record fields from a given id history and id entry
      * @param nIdHistory the id history
      * @param nIdEntry the id entry
-     * @return the record field
+     * @return the list of record fields
      */
-    public RecordField getRecordField( int nIdHistory, int nIdEntry )
+    public List<RecordField> getRecordFieldsList( int nIdHistory, int nIdEntry )
     {
-        RecordField recordField = null;
+        List<RecordField> listRecordFields = null;
         Record record = getRecordFromIdHistory( nIdHistory );
 
         if ( record != null )
@@ -547,13 +547,30 @@ public final class EditRecordService
             recordFieldFilter.setIdEntry( nIdEntry );
             recordFieldFilter.setIdRecord( record.getIdRecord(  ) );
 
-            List<RecordField> listRecordFields = RecordFieldHome.getRecordFieldList( recordFieldFilter, pluginDirectory );
-            record.setListRecordField( listRecordFields );
+            listRecordFields = RecordFieldHome.getRecordFieldList( recordFieldFilter, pluginDirectory );
+        }
 
-            if ( ( record.getListRecordField(  ) != null ) && !record.getListRecordField(  ).isEmpty(  ) )
-            {
-                recordField = record.getListRecordField(  ).get( 0 );
-            }
+        return listRecordFields;
+    }
+
+    /**
+     * Get the record field associated to the entry type download url.
+     * <br />
+     * There is currently only on record field per record for the
+     * entry type download url. So, this method will only fetch the
+     * first record field.
+     * @param nIdHistory the id history
+     * @param nIdEntry the id entry
+     * @return the record field
+     */
+    public RecordField getRecordFieldDownloadUrl( int nIdHistory, int nIdEntry )
+    {
+        RecordField recordField = null;
+        List<RecordField> listRecordField = getRecordFieldsList( nIdHistory, nIdEntry );
+
+        if ( ( listRecordField != null ) && !listRecordField.isEmpty(  ) )
+        {
+            recordField = listRecordField.get( 0 );
         }
 
         return recordField;
@@ -652,8 +669,7 @@ public final class EditRecordService
             {
                 for ( IEntry entry : listEntriesToEdit )
                 {
-                    DirectoryUtils.getDirectoryRecordFieldData( record, request, entry.getIdEntry(  ), true,
-                        listRecordFields, pluginDirectory, request.getLocale(  ) );
+                    getRecordFieldData( request, entry, record, listRecordFields, pluginDirectory, editRecord );
                 }
 
                 record.setListRecordField( listRecordFields );
@@ -764,15 +780,14 @@ public final class EditRecordService
      * @param nIdEntry the id entry
      * @param strRecordFieldValue the record field value
      */
-    public void doEditRecordField( int nIdHistory, int nIdEntry, String strRecordFieldValue )
+    public void doEditRecordFieldDownloadUrl( int nIdHistory, int nIdEntry, String strRecordFieldValue )
     {
-        RecordField recordField = getRecordField( nIdHistory, nIdEntry );
+        RecordField recordField = getRecordFieldDownloadUrl( nIdHistory, nIdEntry );
 
         if ( recordField != null )
         {
-            recordField.setValue( strRecordFieldValue );
-
             Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+            recordField.setValue( strRecordFieldValue );
             RecordFieldHome.update( recordField, pluginDirectory );
         }
     }
@@ -833,6 +848,40 @@ public final class EditRecordService
     }
 
     /**
+     * Get the record field data
+     * @param request the HttpServletRequest
+     * @param entry the entry
+     * @param record the record
+     * @param listRecordFields the list of record fields
+     * @param pluginDirectory the plugin directory
+     * @param editRecord the edit record
+     * @throws DirectoryErrorException Directory exception if mandatory fields are not filled
+     */
+    private void getRecordFieldData( HttpServletRequest request, IEntry entry, Record record,
+        List<RecordField> listRecordFields, Plugin pluginDirectory, EditRecord editRecord )
+        throws DirectoryErrorException
+    {
+        if ( entry instanceof EntryTypeDownloadUrl )
+        {
+            // If entry type download url, then the file is already uploaded, so no need to fetch "again"
+            // otherwise, it will fetch an empty string
+            RecordField recordField = getRecordFieldDownloadUrl( editRecord.getIdHistory(  ), entry.getIdEntry(  ) );
+
+            if ( entry.isMandatory(  ) && ( ( recordField == null ) || StringUtils.isBlank( recordField.getValue(  ) ) ) )
+            {
+                throw new DirectoryErrorException( entry.getTitle(  ) );
+            }
+
+            listRecordFields.add( recordField );
+        }
+        else
+        {
+            DirectoryUtils.getDirectoryRecordFieldData( record, request, entry.getIdEntry(  ), true, listRecordFields,
+                pluginDirectory, request.getLocale(  ) );
+        }
+    }
+
+    /**
      * Do remove a file
      * @param editRecordValue the edit record value
      * @param entry the entry
@@ -841,7 +890,7 @@ public final class EditRecordService
     private void doRemoveFile( EditRecordValue editRecordValue, IEntry entry )
         throws HttpAccessException
     {
-        RecordField recordField = getRecordField( editRecordValue.getIdHistory(  ), entry.getIdEntry(  ) );
+        RecordField recordField = getRecordFieldDownloadUrl( editRecordValue.getIdHistory(  ), entry.getIdEntry(  ) );
 
         if ( recordField != null )
         {
@@ -863,7 +912,8 @@ public final class EditRecordService
                     _blobStoreClientWS.doDeleteFile( getWSRestUrl( entry ), strBlobStore, strBlobKey );
 
                     // Update the record field
-                    doEditRecordField( editRecordValue.getIdHistory(  ), entry.getIdEntry(  ), StringUtils.EMPTY );
+                    doEditRecordFieldDownloadUrl( editRecordValue.getIdHistory(  ), entry.getIdEntry(  ),
+                        StringUtils.EMPTY );
                 }
             }
         }

@@ -399,7 +399,8 @@ public class EditRecordApp implements XPageApplication
                     String strDownloadFileUrl = _editRecordService.getFileUrl( strWSRestUrl, strBlobStore, strBlobKey );
 
                     // Update the record field
-                    _editRecordService.doEditRecordField( editRecord.getIdHistory(  ), nIdEntry, strDownloadFileUrl );
+                    _editRecordService.doEditRecordFieldDownloadUrl( editRecord.getIdHistory(  ), nIdEntry,
+                        strDownloadFileUrl );
 
                     // Update the edit record value
                     for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )

@@ -130,7 +130,7 @@ public class EditRecordAsynchronousUploadHandler implements IAsynchronousUploadH
                                 strBlobKey );
 
                         // Update the record field
-                        _editRecordService.doEditRecordField( nIdHistory, nIdEntry, strDownloadFileUrl );
+                        _editRecordService.doEditRecordFieldDownloadUrl( nIdHistory, nIdEntry, strDownloadFileUrl );
 
                         // Build JSON
                         JSONObject jsonListFileItems = JSONUtils.getUploadedFileJSON( fileItem.getName(  ) );
