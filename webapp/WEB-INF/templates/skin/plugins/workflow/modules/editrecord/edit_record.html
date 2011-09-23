@@ -79,6 +79,15 @@
 								</a>
 							</span>
 						</#if>
+						<#if entry.fields?? && entry.fields?has_content>
+							<#list entry.fields as field>
+								<#if field?? && ( !field.title?? || ( field.title?? && ( field.title == "option" || field.title == "" ) ) )>
+									<input type="hidden" name="_editrecord_upload_maxLength_${entry.idEntry}" id="_editrecord_upload_maxLength_${entry.idEntry}" value="${field.width}" />
+									<input type="hidden" name="_editrecord_upload_fileTypes_${entry.idEntry}" id="_editrecord_upload_fileTypes_${entry.idEntry}" value="${field.value}" />
+									<#break>
+								</#if>
+							</#list>
+						</#if>
 					</div>
 					<div class="form-element">
 						<span class="form-label">

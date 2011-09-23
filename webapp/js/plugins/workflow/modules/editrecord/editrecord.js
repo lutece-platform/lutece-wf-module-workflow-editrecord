@@ -19,8 +19,8 @@ function addAsynchronousUploadField( nIdEntry, nIdHistory, nIdTask ) {
 			'displayData' : 'percentage',
 			
 			// file types & size limit
-//			'fileExt' : getFileExtValue( nIdEntry ),
-//			'fileDesc': ( getFileExtValue( nIdEntry ) == null ? null : 'Fichiers ' + "(" + getFileExtValue( nIdEntry ) ) + ")",
+			'fileExt' : getFileExtValue( nIdEntry ),
+			'fileDesc': ( getFileExtValue( nIdEntry ) == null ? null : 'Fichiers ' + "(" + getFileExtValue( nIdEntry ) ) + ")",
 			'sizeLimit' : getMaxLengthValue( nIdEntry ),
 			
 			// additional parameters
@@ -57,6 +57,29 @@ function addAsynchronousUploadField( nIdEntry, nIdHistory, nIdTask ) {
  */
 function getMaxLengthValue( nIdEntry ) {
 	return getInputValue( '#_editrecord_upload_maxLength_' + nIdEntry );
+}
+
+/**
+ * Get the file extensions
+ * @param nIdEntry the id entry
+ * @return the file extensions
+ */
+function getFileExtValue( nIdEntry ) {
+	var value = getInputValue( '#_editrecord_upload_fileTypes_' + nIdEntry );
+	if ( value != null ) {
+		var reg = new RegExp( "[ ,;]+", "g" );
+		var splitted = value.split(reg);
+		value = "";
+		var hashes = window.location.href.slice( window.location.href.indexOf( '?' ) + 1 ).split( '&' );
+	    for( var i = 0; i < splitted.length; i++ ) {
+	    	if ( i > 0 ) {
+	    		value += ";"
+	    	}
+	    	value += "*." + splitted[i];
+	    }
+	}
+	
+	return value;
 }
 
 /**
