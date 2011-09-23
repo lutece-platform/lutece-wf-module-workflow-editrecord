@@ -42,22 +42,18 @@ import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
 import fr.paris.lutece.plugins.workflow.service.taskinfo.AbstractTaskInfoProvider;
 import fr.paris.lutece.plugins.workflow.service.taskinfo.ITaskInfoProvider;
 import fr.paris.lutece.portal.service.content.XPageAppService;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
-import fr.paris.lutece.util.xml.XmlUtil;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -124,17 +120,7 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
             url.addParameter( EditRecordConstants.PARAMETER_URL_RETURN,
                 AppPropertiesService.getProperty( EditRecordConstants.PROPERTY_URL_RETURN ) );
 
-            StringBuffer sbInfo = new StringBuffer(  );
-
-            Map<String, String> paramHref = new HashMap<String, String>(  );
-            paramHref.put( EditRecordConstants.ATTRIBUTE_HREF, url.getUrl(  ) );
-
-            XmlUtil.beginElement( sbInfo, EditRecordConstants.TAG_A, paramHref );
-            sbInfo.append( I18nService.getLocalizedString( EditRecordConstants.MESSAGE_COMPLETE_RECORD,
-                    request.getLocale(  ) ) );
-            XmlUtil.endElement( sbInfo, EditRecordConstants.TAG_A );
-
-            strInfo = sbInfo.toString(  );
+            strInfo = url.getUrl(  );
         }
 
         return strInfo;

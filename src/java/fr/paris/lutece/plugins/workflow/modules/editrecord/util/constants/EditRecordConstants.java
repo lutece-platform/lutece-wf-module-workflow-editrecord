@@ -114,7 +114,6 @@ public final class EditRecordConstants
     public static final String MESSAGE_DIRECTORY_ERROR = "module.workflow.editrecord.message.directory_error";
     public static final String MESSAGE_APP_ERROR = "module.workflow.editrecord.message.app_error";
     public static final String MESSAGE_EDITION_COMPLETE = "module.workflow.editrecord.message.edition_complete";
-    public static final String MESSAGE_COMPLETE_RECORD = "module.workflow.editrecord.message.complete_record";
     public static final String MESSAGE_UPLOADED_FILE_ALREADY_EXISTS = "module.workflow.editrecord.message.uploaded_file_already_exists";
     public static final String MESSAGE_ERROR_UPLOAD = "module.workflow.editrecord.message.error.upload";
     public static final String MESSAGE_ERROR_REMOVING_FILE = "module.workflow.editrecord.message.error.removingFile";
