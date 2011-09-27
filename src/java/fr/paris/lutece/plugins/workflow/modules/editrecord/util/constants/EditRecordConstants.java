@@ -47,14 +47,6 @@ public final class EditRecordConstants
     public static final String NAME = "name";
     public static final String USER_AUTO = "auto";
     public static final String SLASH = "/";
-    public static final String INTERROGATION_MARK = "?";
-    public static final String AMPERSAND = "&";
-    public static final String EQUAL = "=";
-
-    // These constants are used to provide specific naming for the form tags
-    // associated with the upload widget
-    public static final String UPLOAD_SUBMIT_PREFIX = "_editrecord_upload_submit_";
-    public static final String UPLOAD_DELETE_PREFIX = "_editrecord_upload_delete_";
 
     // PROPERTIES
     public static final String PROPERTY_LABEL_STATE_AFTER_EDITION = "module.workflow.editrecord.task_edit_record_config.label_state_after_edition";
@@ -76,26 +68,18 @@ public final class EditRecordConstants
     public static final String MARK_URL_RETURN = "url_return";
     public static final String MARK_SIGNATURE = "signature";
     public static final String MARK_TIMESTAMP = "timestamp";
-    public static final String MARK_ENTRY_TYPE_DOWNLOAD_URL = "entry_type_download_url";
-    public static final String MARK_IS_BLOBSTORE_SERVICE_ENABLE = "is_blobstore_service_enable";
+    public static final String MARK_ID_DIRECTORY_RECORD = "id_directory_record";
 
     // PARAMETERS
-    public static final String PARAMETER_LABEL_MESSAGE = "label_message";
     public static final String PARAMETER_MESSAGE = "message";
     public static final String PARAMETER_IDS_ENTRY = "ids_entry";
-    public static final String PARAMETER_ID_RECORD = "id_record";
     public static final String PARAMETER_ID_HISTORY = "id_history";
     public static final String PARAMETER_ID_STATE = "id_state";
     public static final String PARAMETER_ID_TASK = "id_task";
-    public static final String PARAMETER_ID_ENTRY = "id_entry";
     public static final String PARAMETER_ACTION = "action";
-    public static final String PARAMETER_SAVE = "save";
     public static final String PARAMETER_URL_RETURN = "url_return";
     public static final String PARAMETER_SIGNATURE = "signature";
     public static final String PARAMETER_TIMESTAMP = "timestamp";
-    public static final String PARAMETER_JSESSION_ID = "jsessionid";
-    public static final String PARAMETER_BLOBSTORE = "blobstore";
-    public static final String PARAMETER_BLOB_KEY = "blob_key";
 
     // ACTIONS
     public static final String ACTION_DO_MODIFY_RECORD = "do_modify_record";
@@ -103,10 +87,8 @@ public final class EditRecordConstants
     // TAGS
     public static final String TAG_EDIT_RECORD = "edit-record";
     public static final String TAG_MESSAGE = "message";
-    public static final String TAG_ID_RECORD = "id-record";
     public static final String TAG_LIST_IDS_ENTRY = "list-ids-entry";
     public static final String TAG_ID_ENTRY = "id-entry";
-    public static final String TAG_A = "a";
 
     // MESSAGES
     public static final String MESSAGE_MANDATORY_FIELD = "module.workflow.editrecord.message.mandatory_field";
@@ -114,12 +96,6 @@ public final class EditRecordConstants
     public static final String MESSAGE_DIRECTORY_ERROR = "module.workflow.editrecord.message.directory_error";
     public static final String MESSAGE_APP_ERROR = "module.workflow.editrecord.message.app_error";
     public static final String MESSAGE_EDITION_COMPLETE = "module.workflow.editrecord.message.edition_complete";
-    public static final String MESSAGE_UPLOADED_FILE_ALREADY_EXISTS = "module.workflow.editrecord.message.uploaded_file_already_exists";
-    public static final String MESSAGE_ERROR_UPLOAD = "module.workflow.editrecord.message.error.upload";
-    public static final String MESSAGE_ERROR_REMOVING_FILE = "module.workflow.editrecord.message.error.removingFile";
-
-    // ATTRIBUTES
-    public static final String ATTRIBUTE_HREF = "href";
 
     /**
      * Private constructor

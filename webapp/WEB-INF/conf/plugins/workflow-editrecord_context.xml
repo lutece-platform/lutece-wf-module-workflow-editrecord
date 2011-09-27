@@ -9,12 +9,9 @@
 
 	<!-- Services -->
 	<bean id="workflow-editrecord.taskEditRecordConfigService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.TaskEditRecordConfigService" />
-	<bean id="workflow-editrecord.editRecordValueService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordValueService">
-		<property name="editRecordService" ref="workflow-editrecord.editRecordService" />
-	</bean>
+	<bean id="workflow-editrecord.editRecordValueService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordValueService" />
 	<bean id="workflow-editrecord.editRecordService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordService">
 		<property name="editRecordValueService" ref="workflow-editrecord.editRecordValueService" />
-		<property name="blobStoreClientWebService" ref="blobstoreclient.blobStoreClientWebService" />
 	</bean>
 
 	<!-- Tasks -->
@@ -42,10 +39,5 @@
 		<property name="privateKey">
 			<value>change me</value>
 		</property>
-	</bean>
-	
-	<!-- Async upload handler -->
-	<bean id="workflow-editrecord.asynchronousHandler" class="fr.paris.lutece.plugins.workflow.modules.editrecord.web.EditRecordAsynchronousUploadHandler">
-		<property name="editRecordService" ref="workflow-editrecord.editRecordService" />
 	</bean>
 </beans>

@@ -1,33 +1,45 @@
+<#function hasChildShownInCompleteness entry>
+	<#if entry.children?has_content>
+		<#list entry.children as child >
+			<#if child.shownInCompleteness>
+				<#return true>
+			</#if>
+		</#list>
+	</#if>
+	<#return false>
+</#function>
+
 <#if config?exists>
 	<p>
 		<label>#i18n{module.workflow.editrecord.task_edit_record_form.label_list_entries} : </label>
+		<br />
 		<#assign index = 0>
 		<#list list_entries as entry>
-			<#if entry.shownInCompleteness || entry.entryType.group>
-				<#if index != 0>
-					<br />
-					<label>&nbsp;</label>
-				</#if>
+			<#if entry.shownInCompleteness>
+				<br />
+				<label>&nbsp;</label>
 				<#if entry.entryType.group>
-					<#if entry.children?has_content>
-						<#list entry.children as child >
-							<#if child.shownInCompleteness>
-								<#if child_index != 0>
-									<br />
-									<label>&nbsp;</label>
-								</#if>
-								<input type="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" />
-								${child.title}
-							</#if>
-						</#list>
-					</#if>
+					
 				<#else>
 					<#if entry.shownInCompleteness>
 						<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" />
 						${entry.title}
 					</#if>
 				</#if>
-				<#assign index = index + 1>
+			<#elseif entry.entryType.group>
+				<#if hasChildShownInCompleteness( entry )>
+					<fieldset>
+						<legend>${entry.title}</legend>
+						<#list entry.children as child >
+							<#if child.shownInCompleteness>
+								<br />
+								<label>&nbsp;</label>
+								<input type="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" />
+								${child.title}
+							</#if>
+						</#list>
+					</fieldset>
+				</#if>
 			</#if>
 		</#list>
 		<br />
