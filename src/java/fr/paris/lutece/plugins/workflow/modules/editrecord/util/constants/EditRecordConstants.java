@@ -59,7 +59,6 @@ public final class EditRecordConstants
     // MARKS
     public static final String MARK_CONFIG = "config";
     public static final String MARK_LIST_STATES = "list_states";
-    public static final String MARK_ID_RECORD = "id_record";
     public static final String MARK_LIST_ENTRIES = "list_entries";
     public static final String MARK_EDIT_RECORD = "edit_record";
     public static final String MARK_MAP_ID_ENTRY_LIST_RECORD_FIELD = "map_id_entry_list_record_field";

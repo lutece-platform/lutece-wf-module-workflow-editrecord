@@ -49,7 +49,7 @@ public class EditRecordDAO implements IEditRecordDAO
 {
     private static final String SQL_QUERY_SELECT = " SELECT id_history, id_task, message, is_complete " +
         " FROM task_edit_record WHERE id_history = ? AND id_task = ? ";
-    private static final String SQL_QUERY_SELECT_BY_ID_TASK = " SELECT id_history, id_record, id_task, message, is_complete " +
+    private static final String SQL_QUERY_SELECT_BY_ID_TASK = " SELECT id_history, id_task, message, is_complete " +
         " FROM task_edit_record WHERE id_task = ? ";
     private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record ( id_history, id_task, message, is_complete ) " +
         " VALUES ( ?,?,?,? ) ";
