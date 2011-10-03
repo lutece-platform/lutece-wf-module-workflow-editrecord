@@ -18,14 +18,8 @@
 			<#if entry.shownInCompleteness>
 				<br />
 				<label>&nbsp;</label>
-				<#if entry.entryType.group>
-					
-				<#else>
-					<#if entry.shownInCompleteness>
-						<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" />
-						${entry.title}
-					</#if>
-				</#if>
+				<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" />
+				${entry.title}
 			<#elseif entry.entryType.group>
 				<#if hasChildShownInCompleteness( entry )>
 					<fieldset>
