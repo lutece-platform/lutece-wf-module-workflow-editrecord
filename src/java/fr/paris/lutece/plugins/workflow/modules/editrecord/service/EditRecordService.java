@@ -406,7 +406,7 @@ public final class EditRecordService
         List<RecordField> listRecordFieldsToNotEdit = new ArrayList<RecordField>(  );
         List<Integer> listIdEntriesToNotEdit = getListIdEntriesToNotEdit( request, nIdRecord, listEditRecordValues );
 
-        if ( ( listIdEntriesToNotEdit != null ) && !listEditRecordValues.isEmpty(  ) )
+        if ( ( listIdEntriesToNotEdit != null ) && !listIdEntriesToNotEdit.isEmpty(  ) )
         {
             // List record fields to not edit
             listRecordFieldsToNotEdit = RecordFieldHome.getRecordFieldSpecificList( listIdEntriesToNotEdit, nIdRecord,
