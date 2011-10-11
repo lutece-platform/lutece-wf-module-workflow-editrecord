@@ -64,7 +64,6 @@ import fr.paris.lutece.plugins.workflow.modules.editrecord.service.signrequest.E
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
 import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
 import fr.paris.lutece.plugins.workflow.service.WorkflowService;
-import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workflow.Action;
 import fr.paris.lutece.portal.business.workflow.State;
@@ -611,16 +610,6 @@ public final class EditRecordService
             if ( ( state != null ) && ( action != null ) )
             {
                 Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
-
-                // Create Resource History
-                ResourceHistory resourceHistory = new ResourceHistory(  );
-                resourceHistory.setIdResource( record.getIdRecord(  ) );
-                resourceHistory.setResourceType( Record.WORKFLOW_RESOURCE_TYPE );
-                resourceHistory.setAction( action );
-                resourceHistory.setWorkFlow( action.getWorkflow(  ) );
-                resourceHistory.setCreationDate( WorkflowUtils.getCurrentTimestamp(  ) );
-                resourceHistory.setUserAccessCode( EditRecordConstants.USER_AUTO );
-                ResourceHistoryHome.create( resourceHistory, pluginWorkflow );
 
                 // Update Resource
                 ResourceWorkflow resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( record.getIdRecord(  ),
