@@ -221,8 +221,12 @@ public final class EditRecordService
     public void removeByIdHistory( int nIdHistory, int nIdTask )
     {
         EditRecord editRecord = find( nIdHistory, nIdTask );
-        _editRecordValueService.remove( editRecord.getIdHistory(  ) );
-        EditRecordHome.removeByIdHistory( nIdHistory, nIdTask );
+
+        if ( editRecord != null )
+        {
+            _editRecordValueService.remove( editRecord.getIdHistory(  ) );
+            EditRecordHome.removeByIdHistory( nIdHistory, nIdTask );
+        }
     }
 
     /**

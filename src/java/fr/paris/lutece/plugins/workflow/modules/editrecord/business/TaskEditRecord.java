@@ -269,6 +269,7 @@ public class TaskEditRecord extends Task
      */
     public void doRemoveTaskInformation( int nIdHistory, Plugin plugin )
     {
+        EditRecordService.getService(  ).removeByIdHistory( nIdHistory, getId(  ) );
     }
 
     /**
