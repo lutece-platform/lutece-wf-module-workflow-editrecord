@@ -650,4 +650,42 @@ public final class EditRecordService
     {
         return EditRecordRequestAuthenticatorService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
     }
+
+    /**
+     * Check if the record has the same state before executing the action
+     * @param editRecord the edit record
+     * @param locale the locale
+     * @return true if the record has a valid state, false otherwise
+     */
+    public boolean isRecordStateValid( EditRecord editRecord, Locale locale )
+    {
+        boolean bIsValid = false;
+
+        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
+        ITask task = TaskHome.findByPrimaryKey( editRecord.getIdTask(  ), pluginWorkflow, locale );
+        TaskEditRecordConfig config = TaskEditRecordConfigService.getService(  )
+                                                                 .findByPrimaryKey( editRecord.getIdTask(  ) );
+
+        if ( ( task != null ) && ( config != null ) )
+        {
+            Action action = ActionHome.findByPrimaryKey( task.getAction(  ).getId(  ), pluginWorkflow );
+
+            if ( ( action != null ) && ( action.getStateAfter(  ) != null ) )
+            {
+                Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
+
+                // Update Resource
+                ResourceWorkflow resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( record.getIdRecord(  ),
+                        Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ), pluginWorkflow );
+
+                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState(  ) != null ) &&
+                        ( resourceWorkflow.getState(  ).getId(  ) == action.getStateAfter(  ).getId(  ) ) )
+                {
+                    bIsValid = true;
+                }
+            }
+        }
+
+        return bIsValid;
+    }
 }

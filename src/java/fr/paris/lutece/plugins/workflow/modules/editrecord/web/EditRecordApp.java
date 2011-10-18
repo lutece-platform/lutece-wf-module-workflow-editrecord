@@ -95,15 +95,23 @@ public class EditRecordApp implements XPageApplication
                 int nIdTask = Integer.parseInt( strIdTask );
                 EditRecord editRecord = _editRecordService.find( nIdHistory, nIdTask );
 
-                if ( ( editRecord != null ) && !editRecord.isComplete(  ) )
+                if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale(  ) ) )
                 {
-                    doAction( request, editRecord );
-                    page = getEditRecordPage( request, editRecord );
+                    if ( ( editRecord != null ) && !editRecord.isComplete(  ) )
+                    {
+                        doAction( request, editRecord );
+                        page = getEditRecordPage( request, editRecord );
+                    }
+                    else
+                    {
+                        _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_NO_FIELD_TO_EDIT,
+                            SiteMessage.TYPE_INFO, request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                    }
                 }
                 else
                 {
-                    _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_NO_FIELD_TO_EDIT,
-                        SiteMessage.TYPE_INFO, request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                    _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
+                        request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
                 }
             }
             else
@@ -209,11 +217,19 @@ public class EditRecordApp implements XPageApplication
     private void doEditRecord( HttpServletRequest request, EditRecord editRecord )
         throws SiteMessageException
     {
-        // Modify record data
-        _editRecordService.doEditRecordData( request, editRecord );
-        // Change record state
-        _editRecordService.doChangeRecordState( editRecord, request.getLocale(  ) );
-        // Change the status of the edit record to complete
-        _editRecordService.doCompleteEditRecord( editRecord );
+        if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale(  ) ) )
+        {
+            // Modify record data
+            _editRecordService.doEditRecordData( request, editRecord );
+            // Change record state
+            _editRecordService.doChangeRecordState( editRecord, request.getLocale(  ) );
+            // Change the status of the edit record to complete
+            _editRecordService.doCompleteEditRecord( editRecord );
+        }
+        else
+        {
+            _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
+                request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+        }
     }
 }
