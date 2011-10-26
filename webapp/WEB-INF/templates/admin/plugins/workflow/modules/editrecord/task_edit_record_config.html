@@ -1,6 +1,10 @@
 <#assign id_state_after_edition = -1>
+<#assign default_message = ''>
 <#if config?exists>
 	<#assign id_state_after_edition = config.idStateAfterEdition>
+	<#if config.defaultMessage??>
+		<#assign default_message = config.defaultMessage>
+	</#if>
 </#if>
 
 <h2>#i18n{module.workflow.editrecord.task_edit_record_config.title}</h2>
@@ -11,6 +15,10 @@
 		<@combo name="id_state" items=list_states default_value=id_state_after_edition />
 		<br/><label>&nbsp;</label>
 		#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition_comment}
+	</p>
+	<p>
+		<label for="default_message">#i18n{module.workflow.editrecord.task_edit_record_config.label_default_message} :</label>
+		<textarea name="default_message" rows="4" cols="80">${default_message}</textarea>
 	</p>
 	<br />
 </div>

@@ -79,6 +79,7 @@ public final class EditRecordConstants
     public static final String PARAMETER_URL_RETURN = "url_return";
     public static final String PARAMETER_SIGNATURE = "signature";
     public static final String PARAMETER_TIMESTAMP = "timestamp";
+    public static final String PARAMETER_DEFAULT_MESSAGE = "default_message";
 
     // ACTIONS
     public static final String ACTION_DO_MODIFY_RECORD = "do_modify_record";

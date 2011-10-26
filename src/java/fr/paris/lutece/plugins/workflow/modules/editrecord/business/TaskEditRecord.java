@@ -280,6 +280,7 @@ public class TaskEditRecord extends Task
         TaskEditRecordConfigService configService = TaskEditRecordConfigService.getService(  );
         String strError = null;
         String strIdStateAfterEdition = request.getParameter( EditRecordConstants.PARAMETER_ID_STATE );
+        String strDefaultMessage = request.getParameter( EditRecordConstants.PARAMETER_DEFAULT_MESSAGE );
         String strField = StringUtils.EMPTY;
 
         if ( StringUtils.isNotBlank( strIdStateAfterEdition ) && StringUtils.isNumeric( strIdStateAfterEdition ) )
@@ -297,6 +298,8 @@ public class TaskEditRecord extends Task
             }
 
             editRecordConfig.setIdStateAfterEdition( nIdStateAfterEdition );
+            editRecordConfig.setDefaultMessage( StringUtils.isNotBlank( strDefaultMessage ) ? strDefaultMessage
+                                                                                            : StringUtils.EMPTY );
 
             if ( bCreate )
             {

@@ -43,6 +43,7 @@ public class TaskEditRecordConfig
 {
     private int _nIdTask;
     private int _nIdStateAfterEdition;
+    private String _strDefaultMessage;
 
     /**
      * Get the ID task
@@ -78,5 +79,23 @@ public class TaskEditRecordConfig
     public int getIdStateAfterEdition(  )
     {
         return _nIdStateAfterEdition;
+    }
+
+    /**
+     * Set the default message
+     * @param strDefaultMessage the default message
+     */
+    public void setDefaultMessage( String strDefaultMessage )
+    {
+        _strDefaultMessage = strDefaultMessage;
+    }
+
+    /**
+     * Get the default message
+     * @return the default message
+     */
+    public String getDefaultMessage(  )
+    {
+        return _strDefaultMessage;
     }
 }

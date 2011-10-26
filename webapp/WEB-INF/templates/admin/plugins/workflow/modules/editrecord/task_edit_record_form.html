@@ -38,6 +38,6 @@
 		</#list>
 		<br />
 		<label for="message_${config.idTask}">#i18n{module.workflow.editrecord.task_edit_record_form.label_message} : </label>
-		<textarea rows="4" cols="80" name="message_${config.idTask}"></textarea>
+		<textarea rows="4" cols="80" name="message_${config.idTask}"><#if config.defaultMessage??>${config.defaultMessage}</#if></textarea>
 	</p>
 </#if>

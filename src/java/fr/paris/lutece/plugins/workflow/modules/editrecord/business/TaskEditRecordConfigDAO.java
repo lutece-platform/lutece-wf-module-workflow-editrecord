@@ -47,14 +47,14 @@ import java.util.List;
  */
 public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_state_after_edition FROM task_edit_record_cf " +
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_state_after_edition, default_message FROM task_edit_record_cf " +
         " WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record_cf ( id_task, id_state_after_edition ) " +
-        " VALUES ( ?,? ) ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE task_edit_record_cf SET id_state_after_edition = ? " +
+    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record_cf ( id_task, id_state_after_edition, default_message ) " +
+        " VALUES ( ?,?,? ) ";
+    private static final String SQL_QUERY_UPDATE = "UPDATE task_edit_record_cf SET id_state_after_edition = ?, default_message = ? " +
         " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM task_edit_record_cf WHERE id_task = ? ";
-    private static final String SQL_QUERY_FIND_ALL = " SELECT id_task, label_message, id_state_after_edition FROM task_edit_record_cf ";
+    private static final String SQL_QUERY_FIND_ALL = " SELECT id_task, id_state_after_edition, default_message FROM task_edit_record_cf ";
 
     /**
      * {@inheritDoc}
@@ -67,6 +67,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
 
         daoUtil.setInt( nIndex++, config.getIdTask(  ) );
         daoUtil.setInt( nIndex++, config.getIdStateAfterEdition(  ) );
+        daoUtil.setString( nIndex++, config.getDefaultMessage(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -82,6 +83,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
         int nIndex = 1;
 
         daoUtil.setInt( nIndex++, config.getIdStateAfterEdition(  ) );
+        daoUtil.setString( nIndex++, config.getDefaultMessage(  ) );
 
         daoUtil.setInt( nIndex++, config.getIdTask(  ) );
         daoUtil.executeUpdate(  );
@@ -107,6 +109,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
             config = new TaskEditRecordConfig(  );
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
             config.setIdStateAfterEdition( daoUtil.getInt( nIndex++ ) );
+            config.setDefaultMessage( daoUtil.getString( nIndex++ ) );
         }
 
         daoUtil.free(  );
@@ -143,6 +146,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
             TaskEditRecordConfig config = new TaskEditRecordConfig(  );
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
             config.setIdStateAfterEdition( daoUtil.getInt( nIndex++ ) );
+            config.setDefaultMessage( daoUtil.getString( nIndex++ ) );
             configList.add( config );
         }
 

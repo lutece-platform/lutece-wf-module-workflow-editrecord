@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS task_edit_record_cf;
 CREATE TABLE task_edit_record_cf(
   id_task INT(11) DEFAULT 0 NOT NULL,
   id_state_after_edition INT(11) DEFAULT 0 NOT NULL,
+  default_message LONG VARCHAR,
   PRIMARY KEY (id_task)
 );
 
@@ -15,7 +16,7 @@ DROP TABLE IF EXISTS task_edit_record;
 CREATE TABLE task_edit_record(
   id_history INT(11) DEFAULT 0 NOT NULL,
   id_task INT(11) DEFAULT 0 NOT NULL,
-  message VARCHAR(255) DEFAULT '' NOT NULL,
+  message LONG VARCHAR,
   is_complete SMALLINT DEFAULT 0 NOT NULL,
   PRIMARY KEY (id_history, id_task)
 );
