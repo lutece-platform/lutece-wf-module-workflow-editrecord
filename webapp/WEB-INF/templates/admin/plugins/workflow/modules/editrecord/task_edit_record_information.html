@@ -2,7 +2,7 @@
     <#if edit_record?exists>
     	<div class="clear">
 	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_message} : </label>
-	    	${edit_record.message}
+	    	<#if edit_record.message??>${edit_record.message}</#if>
 	    </div>
     	<div class="clear">
 	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_is_complete} : </label>
