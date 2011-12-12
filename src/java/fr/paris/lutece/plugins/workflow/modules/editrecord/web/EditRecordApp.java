@@ -95,23 +95,23 @@ public class EditRecordApp implements XPageApplication
                 int nIdTask = Integer.parseInt( strIdTask );
                 EditRecord editRecord = _editRecordService.find( nIdHistory, nIdTask );
 
-                if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale(  ) ) )
+                if ( ( editRecord != null ) && !editRecord.isComplete(  ) )
                 {
-                    if ( ( editRecord != null ) && !editRecord.isComplete(  ) )
+                    if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale(  ) ) )
                     {
                         doAction( request, editRecord );
                         page = getEditRecordPage( request, editRecord );
                     }
                     else
                     {
-                        _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_NO_FIELD_TO_EDIT,
-                            SiteMessage.TYPE_INFO, request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                        _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
+                            request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
                     }
                 }
                 else
                 {
-                    _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
-                        request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                    _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_RECORD_ALREADY_COMPLETED,
+                        SiteMessage.TYPE_INFO, request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
                 }
             }
             else

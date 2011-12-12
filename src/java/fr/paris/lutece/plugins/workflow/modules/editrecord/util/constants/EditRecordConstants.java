@@ -92,7 +92,7 @@ public final class EditRecordConstants
 
     // MESSAGES
     public static final String MESSAGE_MANDATORY_FIELD = "module.workflow.editrecord.message.mandatory_field";
-    public static final String MESSAGE_NO_FIELD_TO_EDIT = "module.workflow.editrecord.message.no_field_to_edit";
+    public static final String MESSAGE_RECORD_ALREADY_COMPLETED = "module.workflow.editrecord.message.record_already_completed";
     public static final String MESSAGE_DIRECTORY_ERROR = "module.workflow.editrecord.message.directory_error";
     public static final String MESSAGE_APP_ERROR = "module.workflow.editrecord.message.app_error";
     public static final String MESSAGE_EDITION_COMPLETE = "module.workflow.editrecord.message.edition_complete";
