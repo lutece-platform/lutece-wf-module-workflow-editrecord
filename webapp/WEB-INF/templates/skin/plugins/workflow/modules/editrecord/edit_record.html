@@ -33,14 +33,22 @@
 						<legend class="form-legend"> ${entry.title} </legend> 
 						<#if entry.children?has_content>
       						<#list entry.children as child >
-      							<#assign entryKey=""+child.idEntry>	
-      							${child.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+      							<#assign entryKey=""+child.idEntry>
+	      						<#if map_id_entry_list_record_field?? && map_id_entry_list_record_field[entryKey]??>
+									${child.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+								<#else>
+	      							${child.getHtmlFormEntry( locale,false )}
+	      						</#if>
       						</#list>
       					</#if>
       				</fieldset>
       			<#else>
-      				<#assign entryKey = "" + entry.idEntry>
-      				${entry.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+      				<#assign entryKey=""+entry.idEntry>
+	      			<#if map_id_entry_list_record_field?? && map_id_entry_list_record_field[entryKey]??>
+	      				${entry.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+					<#else>
+	      				${entry.getHtmlFormEntry( locale,false )}
+	      			</#if>	
       			</#if>
       		</#list>
       		<br />

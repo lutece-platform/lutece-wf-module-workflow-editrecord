@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.directory.business.RecordFieldFilter;
 import fr.paris.lutece.plugins.directory.business.RecordFieldHome;
 import fr.paris.lutece.plugins.directory.business.RecordHome;
 import fr.paris.lutece.plugins.directory.service.DirectoryPlugin;
+import fr.paris.lutece.plugins.directory.service.upload.DirectoryAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.directory.utils.DirectoryErrorException;
 import fr.paris.lutece.plugins.directory.utils.DirectoryUtils;
 import fr.paris.lutece.plugins.workflow.business.ActionHome;
@@ -544,9 +545,10 @@ public final class EditRecordService
      * Do edit the record data
      * @param request the HTTP request
      * @param editRecord the edit record
+     * @return true if the user the record must be updated, false otherwise
      * @throws SiteMessageException site message if there is a problem
      */
-    public void doEditRecordData( HttpServletRequest request, EditRecord editRecord )
+    public boolean doEditRecordData( HttpServletRequest request, EditRecord editRecord )
         throws SiteMessageException
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
@@ -555,43 +557,87 @@ public final class EditRecordService
 
         if ( record != null )
         {
+            String strUploadAction = DirectoryAsynchronousUploadHandler.getHandler(  ).getUploadAction( request );
             List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues(  ) );
             List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, record.getIdRecord(  ),
                     editRecord.getListEditRecordValues(  ) );
 
-            try
+            for ( IEntry entry : listEntriesToEdit )
             {
-                for ( IEntry entry : listEntriesToEdit )
+                try
                 {
                     DirectoryUtils.getDirectoryRecordFieldData( record, request, entry.getIdEntry(  ), true,
                         listRecordFields, pluginDirectory, request.getLocale(  ) );
                 }
-
-                record.setListRecordField( listRecordFields );
+                catch ( DirectoryErrorException error )
+                {
+                    // Case if the user does not upload a file, then throw the error message
+                    if ( StringUtils.isBlank( strUploadAction ) )
+                    {
+                        if ( error.isMandatoryError(  ) )
+                        {
+                            Object[] tabRequiredFields = { error.getTitleField(  ) };
+                            SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD,
+                                tabRequiredFields, SiteMessage.TYPE_STOP );
+                        }
+                        else
+                        {
+                            Object[] tabRequiredFields = { error.getTitleField(  ), error.getErrorMessage(  ) };
+                            SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_DIRECTORY_ERROR,
+                                tabRequiredFields, SiteMessage.TYPE_STOP );
+                        }
+                    }
+                }
             }
-            catch ( DirectoryErrorException error )
+
+            record.setListRecordField( listRecordFields );
+
+            // Special case for upload fields : if no action is specified, a submit
+            // button associated with an upload might have been pressed :
+            if ( StringUtils.isNotBlank( strUploadAction ) )
             {
-                if ( error.isMandatoryError(  ) )
+                Map<String, List<RecordField>> mapListRecordFields = DirectoryUtils.buildMapIdEntryListRecordField( record );
+
+                // Upload the file
+                try
                 {
-                    Object[] tabRequiredFields = { error.getTitleField(  ) };
-                    SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD,
-                        tabRequiredFields, SiteMessage.TYPE_STOP );
+                    DirectoryAsynchronousUploadHandler.getHandler(  )
+                                                      .doUploadAction( request, strUploadAction, mapListRecordFields,
+                        record, pluginDirectory );
                 }
-                else
+                catch ( DirectoryErrorException error )
                 {
-                    Object[] tabRequiredFields = { error.getTitleField(  ), error.getErrorMessage(  ) };
-                    SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_DIRECTORY_ERROR,
-                        tabRequiredFields, SiteMessage.TYPE_STOP );
+                    if ( error.isMandatoryError(  ) )
+                    {
+                        Object[] tabRequiredFields = { error.getTitleField(  ) };
+                        SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD,
+                            tabRequiredFields, SiteMessage.TYPE_STOP );
+                    }
+                    else
+                    {
+                        Object[] tabRequiredFields = { error.getTitleField(  ), error.getErrorMessage(  ) };
+                        SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_DIRECTORY_ERROR,
+                            tabRequiredFields, SiteMessage.TYPE_STOP );
+                    }
                 }
+
+                // Put the map <idEntry, RecordFields> in the session
+                request.getSession(  )
+                       .setAttribute( EditRecordConstants.SESSION_EDIT_RECORD_LIST_SUBMITTED_RECORD_FIELDS,
+                    mapListRecordFields );
+
+                return false;
             }
 
             RecordHome.updateWidthRecordField( record, pluginDirectory );
+
+            return true;
         }
-        else
-        {
-            setSiteMessage( request, EditRecordConstants.MESSAGE_APP_ERROR, SiteMessage.TYPE_STOP,
-                request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
-        }
+
+        setSiteMessage( request, EditRecordConstants.MESSAGE_APP_ERROR, SiteMessage.TYPE_STOP,
+            request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+
+        return false;
     }
 
     /**

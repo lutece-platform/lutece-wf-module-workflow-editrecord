@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.editrecord.web;
 import fr.paris.lutece.plugins.directory.business.IEntry;
 import fr.paris.lutece.plugins.directory.business.Record;
 import fr.paris.lutece.plugins.directory.business.RecordField;
+import fr.paris.lutece.plugins.directory.service.DirectoryPlugin;
 import fr.paris.lutece.plugins.directory.service.upload.DirectoryAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordService;
@@ -44,6 +45,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -141,18 +143,40 @@ public class EditRecordApp implements XPageApplication
     {
         XPage page = new XPage(  );
 
-        // Remove asynchronous uploaded file from session
-        HttpSession session = request.getSession(  );
+        List<IEntry> listEntries = _editRecordService.getListEntriesToEdit( request,
+                editRecord.getListEditRecordValues(  ) );
+
+        /**
+         * Map of <idEntry, RecordFields>
+         *         1) The user has uploaded/deleted a file
+         *                 - The updated map is stored in the session
+         *  2) The user has not uploaded/delete a file
+         *          - The map is filled with the data from the database
+         *          - The asynchronous uploaded files map is reinitialized
+         */
+        Map<String, List<RecordField>> mapRecordFields = null;
+
+        // Get the map of <idEntry, RecordFields from session if it exists : 
+        /** 1) Case when the user has uploaded a file, the the map is stored in the session */
+        HttpSession session = request.getSession( false );
 
         if ( session != null )
         {
-            DirectoryAsynchronousUploadHandler.removeSessionFiles( session.getId(  ) );
+            mapRecordFields = (Map<String, List<RecordField>>) session.getAttribute( EditRecordConstants.SESSION_EDIT_RECORD_LIST_SUBMITTED_RECORD_FIELDS );
+            // IMPORTANT : Remove the map from the session
+            session.removeAttribute( EditRecordConstants.SESSION_EDIT_RECORD_LIST_SUBMITTED_RECORD_FIELDS );
         }
 
-        List<IEntry> listEntries = _editRecordService.getListEntriesToEdit( request,
-                editRecord.getListEditRecordValues(  ) );
-        Map<String, List<RecordField>> mapRecordFields = _editRecordService.getMapIdEntryListRecordField( listEntries,
-                editRecord.getIdHistory(  ) );
+        // Get the map <idEntry, RecordFields> classically from the database
+        /** 2) The user has not uploaded/delete a file */
+        if ( mapRecordFields == null )
+        {
+            Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
+            mapRecordFields = _editRecordService.getMapIdEntryListRecordField( listEntries, editRecord.getIdHistory(  ) );
+            // Reinit the asynchronous uploaded file map
+            DirectoryAsynchronousUploadHandler.getHandler(  ).reinitMap( request, mapRecordFields, pluginDirectory );
+        }
+
         Record record = _editRecordService.getRecordFromIdHistory( editRecord.getIdHistory(  ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
@@ -196,14 +220,15 @@ public class EditRecordApp implements XPageApplication
         {
             if ( EditRecordConstants.ACTION_DO_MODIFY_RECORD.equals( strAction ) )
             {
-                doEditRecord( request, editRecord );
-
-                // Back to home page
-                String strUrlReturn = request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN );
-                strUrlReturn = StringUtils.isNotBlank( strUrlReturn ) ? strUrlReturn
-                                                                      : AppPathService.getBaseUrl( request );
-                _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_EDITION_COMPLETE,
-                    SiteMessage.TYPE_INFO, strUrlReturn );
+                if ( doEditRecord( request, editRecord ) )
+                {
+                    // Back to home page
+                    String strUrlReturn = request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN );
+                    strUrlReturn = StringUtils.isNotBlank( strUrlReturn ) ? strUrlReturn
+                                                                          : AppPathService.getBaseUrl( request );
+                    _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_EDITION_COMPLETE,
+                        SiteMessage.TYPE_INFO, strUrlReturn );
+                }
             }
         }
     }
@@ -212,24 +237,33 @@ public class EditRecordApp implements XPageApplication
      * Do edit a record
      * @param request the HTTP request
      * @param editRecord the edit record
+     * @return true if the record must be updated, false otherwise
      * @throws SiteMessageException a site message if there is a problem
      */
-    private void doEditRecord( HttpServletRequest request, EditRecord editRecord )
+    private boolean doEditRecord( HttpServletRequest request, EditRecord editRecord )
         throws SiteMessageException
     {
         if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale(  ) ) )
         {
             // Modify record data
-            _editRecordService.doEditRecordData( request, editRecord );
-            // Change record state
-            _editRecordService.doChangeRecordState( editRecord, request.getLocale(  ) );
-            // Change the status of the edit record to complete
-            _editRecordService.doCompleteEditRecord( editRecord );
+            if ( _editRecordService.doEditRecordData( request, editRecord ) )
+            {
+                // Change record state
+                _editRecordService.doChangeRecordState( editRecord, request.getLocale(  ) );
+                // Change the status of the edit record to complete
+                _editRecordService.doCompleteEditRecord( editRecord );
+
+                return true;
+            }
+
+            return false;
         }
         else
         {
             _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
                 request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
         }
+
+        return false;
     }
 }

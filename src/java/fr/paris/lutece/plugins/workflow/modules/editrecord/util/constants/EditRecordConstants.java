@@ -90,6 +90,9 @@ public final class EditRecordConstants
     public static final String TAG_LIST_IDS_ENTRY = "list-ids-entry";
     public static final String TAG_ID_ENTRY = "id-entry";
 
+    // SESSION
+    public static final String SESSION_EDIT_RECORD_LIST_SUBMITTED_RECORD_FIELDS = "edit_record_list_submitted_record_fields";
+
     // MESSAGES
     public static final String MESSAGE_MANDATORY_FIELD = "module.workflow.editrecord.message.mandatory_field";
     public static final String MESSAGE_RECORD_ALREADY_COMPLETED = "module.workflow.editrecord.message.record_already_completed";
