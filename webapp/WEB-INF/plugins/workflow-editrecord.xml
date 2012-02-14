@@ -2,7 +2,7 @@
     <!-- Plugin Informations -->
     <name>workflow-editrecord</name>
     <class>fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordPlugin</class>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <documentation/>
     <installation/>
     <changes/>
