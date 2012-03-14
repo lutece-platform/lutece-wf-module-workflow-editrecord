@@ -46,6 +46,12 @@
 			<version>[2.0.0,)</version>
 			<type>lutece-plugin</type>
 		</dependency>
+		<dependency>
+			<groupId>fr.paris.lutece.plugins</groupId>
+			<artifactId>library-signrequest</artifactId>
+			<version>[1.0.1,)</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 	
 	<properties>
