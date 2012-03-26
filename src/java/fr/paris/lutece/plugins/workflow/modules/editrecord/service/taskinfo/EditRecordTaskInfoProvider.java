@@ -66,7 +66,7 @@ import javax.servlet.http.HttpServletRequest;
 public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
 {
     private static final String BEAN_EDIT_RECORD_TASK_INFO_PROVIDER = "workflow-editrecord.editRecordTaskInfoProvider";
-    private static final String JSP_SITE_PORTAL = "jsp/site/Portal.jsp";
+    private static final String PROPERTY_BASE_URL_USE_PROPERTY = "workflow-editrecord.base_url.use_property";
 
     /**
      * Get the instance of the provider
@@ -111,7 +111,7 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
                 sbUrl.append( EditRecordConstants.SLASH );
             }
 
-            UrlItem url = new UrlItem( sbUrl.toString(  ) + JSP_SITE_PORTAL );
+            UrlItem url = new UrlItem( sbUrl.toString(  ) + AppPathService.getPortalUrl(  ) );
             url.addParameter( XPageAppService.PARAM_XPAGE_APP, EditRecordPlugin.PLUGIN_NAME );
             url.addParameter( EditRecordConstants.PARAMETER_ID_HISTORY, nIdHistory );
             url.addParameter( EditRecordConstants.PARAMETER_ID_TASK, nIdTask );
@@ -135,7 +135,7 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
     {
         String strBaseUrl = StringUtils.EMPTY;
 
-        if ( request != null )
+        if ( ( request != null ) && !isBaseUrlFetchedInProperty(  ) )
         {
             strBaseUrl = AppPathService.getBaseUrl( request );
         }
@@ -150,5 +150,14 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
         }
 
         return strBaseUrl;
+    }
+
+    /**
+     * Check if the base url must be fetched in the config.properties file or in the request
+     * @return true if it must be fetched in the config.properties file
+     */
+    private boolean isBaseUrlFetchedInProperty(  )
+    {
+        return Boolean.valueOf( AppPropertiesService.getProperty( PROPERTY_BASE_URL_USE_PROPERTY ) );
     }
 }
