@@ -48,41 +48,43 @@ import fr.paris.lutece.plugins.directory.service.DirectoryPlugin;
 import fr.paris.lutece.plugins.directory.service.upload.DirectoryAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.directory.utils.DirectoryErrorException;
 import fr.paris.lutece.plugins.directory.utils.DirectoryUtils;
-import fr.paris.lutece.plugins.workflow.business.ActionHome;
-import fr.paris.lutece.plugins.workflow.business.ResourceHistory;
-import fr.paris.lutece.plugins.workflow.business.ResourceHistoryHome;
-import fr.paris.lutece.plugins.workflow.business.ResourceWorkflow;
-import fr.paris.lutece.plugins.workflow.business.ResourceWorkflowHome;
-import fr.paris.lutece.plugins.workflow.business.StateFilter;
-import fr.paris.lutece.plugins.workflow.business.StateHome;
-import fr.paris.lutece.plugins.workflow.business.task.ITask;
-import fr.paris.lutece.plugins.workflow.business.task.TaskHome;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
-import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordHome;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.business.IEditRecordDAO;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.signrequest.EditRecordRequestAuthenticatorService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
-import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
-import fr.paris.lutece.plugins.workflow.service.WorkflowService;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
+import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.workflow.Action;
-import fr.paris.lutece.portal.business.workflow.State;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.ReferenceList;
 
 import org.apache.commons.lang.StringUtils;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -92,38 +94,36 @@ import javax.servlet.http.HttpServletRequest;
  * EditRecordService
  *
  */
-public final class EditRecordService
+public class EditRecordService implements IEditRecordService
 {
-    private static final String BEAN_EDIT_RECORD_SERVICE = "workflow-editrecord.editRecordService";
-    private EditRecordValueService _editRecordValueService;
+    public static final String BEAN_SERVICE = "workflow-editrecord.editRecordService";
 
-    /**
-     * Private constructor
-     */
-    private EditRecordService(  )
-    {
-    }
+    // SERVICES
+    @Inject
+    private IEditRecordValueService _editRecordValueService;
+    @Inject
+    private ITaskService _taskService;
+    @Inject
+    private IStateService _stateService;
+    @Inject
+    private IResourceWorkflowService _resourceWorkflowService;
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
+    @Inject
+    private ITaskEditRecordConfigService _taskEditRecordConfigService;
+    @Inject
+    private IActionService _actionService;
 
-    /**
-     * Get the instance of the service
-     * @return the instance of the service
-     */
-    public static EditRecordService getService(  )
-    {
-        return (EditRecordService) SpringContextService.getPluginBean( EditRecordPlugin.PLUGIN_NAME,
-            BEAN_EDIT_RECORD_SERVICE );
-    }
+    // DAO
+    @Inject
+    private IEditRecordDAO _editRecordDAO;
 
     // SET
 
     /**
-     * Set the site message
-     * @param request the HTTP request
-     * @param strMessage the message
-     * @param nTypeMessage the message type
-     * @param strUrlReturn the url return
-     * @throws SiteMessageException the site message
+     * {@inheritDoc}
      */
+    @Override
     public void setSiteMessage( HttpServletRequest request, String strMessage, int nTypeMessage, String strUrlReturn )
         throws SiteMessageException
     {
@@ -137,26 +137,18 @@ public final class EditRecordService
         }
     }
 
-    /**
-     * Set the edit record value service
-     * @param editRecordValueService the edit record value service
-     */
-    public void setEditRecordValueService( EditRecordValueService editRecordValueService )
-    {
-        _editRecordValueService = editRecordValueService;
-    }
-
     // CRUD
 
     /**
-     * Create an edit record
-     * @param editRecord the edit record
+     * {@inheritDoc}
      */
+    @Override
+    @Transactional( "workflow-editrecord.transactionManager" )
     public void create( EditRecord editRecord )
     {
         if ( editRecord != null )
         {
-            EditRecordHome.create( editRecord );
+            _editRecordDAO.insert( editRecord, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
 
             for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
             {
@@ -167,14 +159,15 @@ public final class EditRecordService
     }
 
     /**
-     * Update an edit record
-     * @param editRecord the edit record
+     * {@inheritDoc}
      */
+    @Override
+    @Transactional( "workflow-editrecord.transactionManager" )
     public void update( EditRecord editRecord )
     {
         if ( editRecord != null )
         {
-            EditRecordHome.update( editRecord );
+            _editRecordDAO.store( editRecord, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
             // Remove its edit record values first
             _editRecordValueService.remove( editRecord.getIdHistory(  ) );
 
@@ -187,14 +180,13 @@ public final class EditRecordService
     }
 
     /**
-     * Find an edit record
-     * @param nIdHistory the id history
-     * @param nIdTask the id task
-     * @return a edit record
+     * {@inheritDoc}
      */
+    @Override
     public EditRecord find( int nIdHistory, int nIdTask )
     {
-        EditRecord editRecord = EditRecordHome.find( nIdHistory, nIdTask );
+        EditRecord editRecord = _editRecordDAO.load( nIdHistory, nIdTask,
+                PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
 
         if ( editRecord != null )
         {
@@ -205,20 +197,19 @@ public final class EditRecordService
     }
 
     /**
-     * Find edit records by a given id task
-     * @param nIdTask the id task
-     * @return the list of edit records
+     * {@inheritDoc}
      */
+    @Override
     public List<EditRecord> findByIdTask( int nIdTask )
     {
-        return EditRecordHome.findByIdTask( nIdTask );
+        return _editRecordDAO.loadByIdTask( nIdTask, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
     }
 
     /**
-     * Remove an edit record
-     * @param nIdHistory the id history
-     * @param nIdTask the id task
+     * {@inheritDoc}
      */
+    @Override
+    @Transactional( "workflow-editrecord.transactionManager" )
     public void removeByIdHistory( int nIdHistory, int nIdTask )
     {
         EditRecord editRecord = find( nIdHistory, nIdTask );
@@ -226,14 +217,16 @@ public final class EditRecordService
         if ( editRecord != null )
         {
             _editRecordValueService.remove( editRecord.getIdHistory(  ) );
-            EditRecordHome.removeByIdHistory( nIdHistory, nIdTask );
+            _editRecordDAO.deleteByIdHistory( nIdHistory, nIdTask,
+                PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
         }
     }
 
     /**
-     * Remove an edit record by id task
-     * @param nIdTask the id task
+     * {@inheritDoc}
      */
+    @Override
+    @Transactional( "workflow-editrecord.transactionManager" )
     public void removeByIdTask( int nIdTask )
     {
         for ( EditRecord editRecord : findByIdTask( nIdTask ) )
@@ -241,28 +234,26 @@ public final class EditRecordService
             _editRecordValueService.remove( editRecord.getIdHistory(  ) );
         }
 
-        EditRecordHome.removeByIdTask( nIdTask );
+        _editRecordDAO.deleteByIdTask( nIdTask, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
     }
 
     // GET
 
     /**
-     * Get the list of states
-     * @param nIdAction the id action
-     * @return a ReferenceList
+     * {@inheritDoc}
      */
+    @Override
     public ReferenceList getListStates( int nIdAction )
     {
-        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
         ReferenceList referenceListStates = new ReferenceList(  );
-        Action action = ActionHome.findByPrimaryKey( nIdAction, pluginWorkflow );
+        Action action = _actionService.findByPrimaryKey( nIdAction );
 
         if ( ( action != null ) && ( action.getWorkflow(  ) != null ) )
         {
             StateFilter stateFilter = new StateFilter(  );
             stateFilter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
 
-            List<State> listStates = StateHome.getListStateByFilter( stateFilter, pluginWorkflow );
+            List<State> listStates = _stateService.getListStateByFilter( stateFilter );
 
             referenceListStates.addItem( DirectoryUtils.CONSTANT_ID_NULL, StringUtils.EMPTY );
             referenceListStates.addAll( ReferenceList.convert( listStates, EditRecordConstants.ID,
@@ -273,12 +264,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the list of entries for the form
-     * @param nIdRecord the id record
-     * @param nIdTask the id task
-     * @param request the HTTP request
-     * @return a list of entries
+     * {@inheritDoc}
      */
+    @Override
     public List<IEntry> getFormListEntries( int nIdRecord, int nIdTask, HttpServletRequest request )
     {
         AdminUser user = AdminUserService.getAdminUser( request );
@@ -297,10 +285,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the list of entries for information
-     * @param nIdHistory the id edit record
-     * @return a list of entries
+     * {@inheritDoc}
      */
+    @Override
     public List<IEntry> getInformationListEntries( int nIdHistory )
     {
         List<EditRecordValue> listEditRecordValues = _editRecordValueService.find( nIdHistory );
@@ -321,11 +308,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the list of entries to edit
-     * @param request the HTTP request
-     * @param listEditRecordValues the list of edit record values
-     * @return a list of entries
+     * {@inheritDoc}
      */
+    @Override
     public List<IEntry> getListEntriesToEdit( HttpServletRequest request, List<EditRecordValue> listEditRecordValues )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
@@ -347,12 +332,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the list of entries to not edit
-     * @param request the HTTP request
-     * @param nIdRecord the id record
-     * @param listEditRecordValues the list of edit record values
-     * @return a list of entries
+     * {@inheritDoc}
      */
+    @Override
     public List<Integer> getListIdEntriesToNotEdit( HttpServletRequest request, int nIdRecord,
         List<EditRecordValue> listEditRecordValues )
     {
@@ -397,12 +379,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the list of record fieds to not edit
-     * @param request the HTTP request
-     * @param nIdRecord the id record
-     * @param listEditRecordValues the list of edit record values
-     * @return a list of record fields
+     * {@inheritDoc}
      */
+    @Override
     public List<RecordField> getListRecordFieldsToNotEdit( HttpServletRequest request, int nIdRecord,
         List<EditRecordValue> listEditRecordValues )
     {
@@ -421,11 +400,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the map id entry - list record fields
-     * @param listEntries the list of entries to edit
-     * @param nIdHistory the id history
-     * @return a map of id entry - list record fields
+     * {@inheritDoc}
      */
+    @Override
     public Map<String, List<RecordField>> getMapIdEntryListRecordField( List<IEntry> listEntries, int nIdHistory )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
@@ -435,10 +412,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the entry from a given id entry
-     * @param nIdEntry the id entry
-     * @return an {@link IEntry}
+     * {@inheritDoc}
      */
+    @Override
     public IEntry getEntry( int nIdEntry )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
@@ -447,9 +423,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the entry type download url
-     * @return the entry type downlaod url
+     * {@inheritDoc}
      */
+    @Override
     public EntryType getEntryTypeDownloadUrl(  )
     {
         EntryType entryTypeDownloadUrl = null;
@@ -469,15 +445,13 @@ public final class EditRecordService
     }
 
     /**
-     * Get the record from a given id history
-     * @param nIdHistory the id history
-     * @return the record
+     * {@inheritDoc}
      */
+    @Override
     public Record getRecordFromIdHistory( int nIdHistory )
     {
         Record record = null;
-        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-        ResourceHistory resourceHistory = ResourceHistoryHome.findByPrimaryKey( nIdHistory, pluginWorkflow );
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
 
         if ( ( resourceHistory != null ) &&
                 Record.WORKFLOW_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
@@ -492,11 +466,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the list of record fields from a given id history and id entry
-     * @param nIdHistory the id history
-     * @param nIdEntry the id entry
-     * @return the list of record fields
+     * {@inheritDoc}
      */
+    @Override
     public List<RecordField> getRecordFieldsList( int nIdHistory, int nIdEntry )
     {
         List<RecordField> listRecordFields = null;
@@ -517,15 +489,9 @@ public final class EditRecordService
     }
 
     /**
-     * Get the record field associated to the entry type download url.
-     * <br />
-     * There is currently only on record field per record for the
-     * entry type download url. So, this method will only fetch the
-     * first record field.
-     * @param nIdHistory the id history
-     * @param nIdEntry the id entry
-     * @return the record field
+     * {@inheritDoc}
      */
+    @Override
     public RecordField getRecordFieldDownloadUrl( int nIdHistory, int nIdEntry )
     {
         RecordField recordField = null;
@@ -542,12 +508,9 @@ public final class EditRecordService
     // DO
 
     /**
-     * Do edit the record data
-     * @param request the HTTP request
-     * @param editRecord the edit record
-     * @return true if the user the record must be updated, false otherwise
-     * @throws SiteMessageException site message if there is a problem
+     * {@inheritDoc}
      */
+    @Override
     public boolean doEditRecordData( HttpServletRequest request, EditRecord editRecord )
         throws SiteMessageException
     {
@@ -641,31 +604,28 @@ public final class EditRecordService
     }
 
     /**
-     * Do change the record state
-     * @param editRecord edit record
-     * @param locale the locale
+     * {@inheritDoc}
      */
+    @Override
     public void doChangeRecordState( EditRecord editRecord, Locale locale )
     {
-        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-        ITask task = TaskHome.findByPrimaryKey( editRecord.getIdTask(  ), pluginWorkflow, locale );
-        TaskEditRecordConfig config = TaskEditRecordConfigService.getService(  )
-                                                                 .findByPrimaryKey( editRecord.getIdTask(  ) );
+        ITask task = _taskService.findByPrimaryKey( editRecord.getIdTask(  ), locale );
+        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( editRecord.getIdTask(  ) );
 
         if ( ( task != null ) && ( config != null ) )
         {
-            State state = StateHome.findByPrimaryKey( config.getIdStateAfterEdition(  ), pluginWorkflow );
-            Action action = ActionHome.findByPrimaryKey( task.getAction(  ).getId(  ), pluginWorkflow );
+            State state = _stateService.findByPrimaryKey( config.getIdStateAfterEdition(  ) );
+            Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
 
             if ( ( state != null ) && ( action != null ) )
             {
                 Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
 
                 // Update Resource
-                ResourceWorkflow resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( record.getIdRecord(  ),
-                        Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ), pluginWorkflow );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( record.getIdRecord(  ),
+                        Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ) );
                 resourceWorkflow.setState( state );
-                ResourceWorkflowHome.update( resourceWorkflow, pluginWorkflow );
+                _resourceWorkflowService.update( resourceWorkflow );
 
                 // if new state have action automatic
                 WorkflowService.getInstance(  )
@@ -676,9 +636,9 @@ public final class EditRecordService
     }
 
     /**
-     * Do change the edit record to complete
-     * @param editRecord the edit record
+     * {@inheritDoc}
      */
+    @Override
     public void doCompleteEditRecord( EditRecord editRecord )
     {
         editRecord.setIsComplete( true );
@@ -688,41 +648,36 @@ public final class EditRecordService
     // CHECK
 
     /**
-     * Check if the request is authenticated or not
-     * @param request the HTTP request
-     * @return true if the requet is authenticated, false otherwise
+     * {@inheritDoc}
      */
+    @Override
     public boolean isRequestAuthenticated( HttpServletRequest request )
     {
         return EditRecordRequestAuthenticatorService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
     }
 
     /**
-     * Check if the record has the same state before executing the action
-     * @param editRecord the edit record
-     * @param locale the locale
-     * @return true if the record has a valid state, false otherwise
+     * {@inheritDoc}
      */
+    @Override
     public boolean isRecordStateValid( EditRecord editRecord, Locale locale )
     {
         boolean bIsValid = false;
 
-        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-        ITask task = TaskHome.findByPrimaryKey( editRecord.getIdTask(  ), pluginWorkflow, locale );
-        TaskEditRecordConfig config = TaskEditRecordConfigService.getService(  )
-                                                                 .findByPrimaryKey( editRecord.getIdTask(  ) );
+        ITask task = _taskService.findByPrimaryKey( editRecord.getIdTask(  ), locale );
+        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( editRecord.getIdTask(  ) );
 
         if ( ( task != null ) && ( config != null ) )
         {
-            Action action = ActionHome.findByPrimaryKey( task.getAction(  ).getId(  ), pluginWorkflow );
+            Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
 
             if ( ( action != null ) && ( action.getStateAfter(  ) != null ) )
             {
                 Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
 
                 // Update Resource
-                ResourceWorkflow resourceWorkflow = ResourceWorkflowHome.findByPrimaryKey( record.getIdRecord(  ),
-                        Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ), pluginWorkflow );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( record.getIdRecord(  ),
+                        Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ) );
 
                 if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState(  ) != null ) &&
                         ( resourceWorkflow.getState(  ).getId(  ) == action.getStateAfter(  ).getId(  ) ) )

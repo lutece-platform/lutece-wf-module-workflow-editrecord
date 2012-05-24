@@ -60,6 +60,7 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void insert( EditRecord editRecord, Plugin plugin )
     {
         int nIndex = 1;
@@ -77,6 +78,7 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void store( EditRecord editRecord, Plugin plugin )
     {
         int nIndex = 1;
@@ -96,6 +98,7 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public EditRecord load( int nIdHistory, int nIdTask, Plugin plugin )
     {
         EditRecord editRecord = null;
@@ -126,6 +129,7 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<EditRecord> loadByIdTask( int nIdTask, Plugin plugin )
     {
         List<EditRecord> listEditRecords = new ArrayList<EditRecord>(  );
@@ -154,6 +158,7 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteByIdHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_HISTORY, plugin );
@@ -168,6 +173,7 @@ public class EditRecordDAO implements IEditRecordDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteByIdTask( int nIdTask, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );

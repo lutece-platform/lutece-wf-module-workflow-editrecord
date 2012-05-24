@@ -56,6 +56,7 @@ public class EditRecordValueDAO implements IEditRecordValueDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void insert( EditRecordValue editRecordValue, Plugin plugin )
     {
         int nIndex = 1;
@@ -71,6 +72,7 @@ public class EditRecordValueDAO implements IEditRecordValueDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<EditRecordValue> load( int nIdHistory, Plugin plugin )
     {
         List<EditRecordValue> listEditRecordValues = new ArrayList<EditRecordValue>(  );
@@ -99,6 +101,7 @@ public class EditRecordValueDAO implements IEditRecordValueDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete( int nIdHistory, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );

@@ -31,60 +31,39 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.editrecord.business;
+package fr.paris.lutece.plugins.workflow.modules.editrecord.service;
 
-import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordPlugin;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
 /**
  *
- * EditRecordHome
  *
  */
-public final class EditRecordValueHome
+public interface IEditRecordValueService
 {
-    private static final String BEAN_EDIT_RECORD_VALUE_DAO = "workflow-editrecord.editRecordValueDAO";
-    private static Plugin _plugin = PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME );
-    private static IEditRecordValueDAO _dao = (IEditRecordValueDAO) SpringContextService.getPluginBean( EditRecordPlugin.PLUGIN_NAME,
-            BEAN_EDIT_RECORD_VALUE_DAO );
+    /**
+    * Create a new edit record value
+    * @param editRecordValue the edit record value
+    */
+    @Transactional( "workflow-editrecord.transactionManager" )
+    void create( EditRecordValue editRecordValue );
 
     /**
-     * Private constructor - this class need not be instantiated
-     */
-    private EditRecordValueHome(  )
-    {
-    }
-
-    /**
-     * Creation of an instance of edit record value
-     * @param editRecordValue The instance of EditRecordValue
-     */
-    public static void create( EditRecordValue editRecordValue )
-    {
-        _dao.insert( editRecordValue, _plugin );
-    }
-
-    /**
-     * Remove EditRecordValue
-     * @param nIdHistory the id history
-     */
-    public static void remove( int nIdHistory )
-    {
-        _dao.delete( nIdHistory, _plugin );
-    }
-
-    /**
-     * Load the EditRecordValue Object
+     * Find edit record values from a given id history
      * @param nIdHistory the id history
      * @return a list of EditRecordValue
      */
-    public static List<EditRecordValue> find( int nIdHistory )
-    {
-        return _dao.load( nIdHistory, _plugin );
-    }
+    List<EditRecordValue> find( int nIdHistory );
+
+    /**
+     * Remove EditRecordValue from a given id edit record
+     * @param nIdHistory the id history
+     */
+    @Transactional( "workflow-editrecord.transactionManager" )
+    void remove( int nIdHistory );
 }

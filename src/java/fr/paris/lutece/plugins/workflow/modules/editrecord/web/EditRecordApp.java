@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.directory.service.DirectoryPlugin;
 import fr.paris.lutece.plugins.directory.service.upload.DirectoryAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordService;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.service.IEditRecordService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -47,6 +48,7 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Messages;
@@ -75,7 +77,7 @@ public class EditRecordApp implements XPageApplication
     private static final String TEMPLATE_EDIT_RECORD = "skin/plugins/workflow/modules/editrecord/edit_record.html";
 
     // SERVICES
-    private EditRecordService _editRecordService = EditRecordService.getService(  );
+    private IEditRecordService _editRecordService = SpringContextService.getBean( EditRecordService.BEAN_SERVICE );
 
     /**
      * {@inheritDoc}

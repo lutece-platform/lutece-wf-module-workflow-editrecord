@@ -33,54 +33,51 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service;
 
-import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
-import fr.paris.lutece.plugins.workflow.modules.editrecord.business.IEditRecordValueDAO;
-import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 
 /**
  *
- * EditRecordValueService
+ * ITaskEditRecordConfigService
  *
  */
-public class EditRecordValueService implements IEditRecordValueService
+public interface ITaskEditRecordConfigService
 {
-    public static final String BEAN_SERVICE = "workflow-editrecord.editRecordValueService";
-    @Inject
-    private IEditRecordValueDAO _editRecordValueDAO;
-
     /**
-     * {@inheritDoc}
-     */
-    @Override
+    * Create a new config
+    * @param config the config
+    */
     @Transactional( "workflow-editrecord.transactionManager" )
-    public void create( EditRecordValue editRecordValue )
-    {
-        _editRecordValueDAO.insert( editRecordValue, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
-    }
+    void create( TaskEditRecordConfig config );
 
     /**
-     * {@inheritDoc}
+     * Update a config
+     * @param config the config
      */
-    @Override
-    public List<EditRecordValue> find( int nIdHistory )
-    {
-        return _editRecordValueDAO.load( nIdHistory, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Transactional( "workflow-editrecord.transactionManager" )
-    public void remove( int nIdHistory )
-    {
-        _editRecordValueDAO.delete( nIdHistory, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
-    }
+    void update( TaskEditRecordConfig config );
+
+    /**
+     * Remove a config
+     * @param nIdTask the task id
+     */
+    @Transactional( "workflow-editrecord.transactionManager" )
+    void remove( int nIdTask );
+
+    /**
+     * Find a config
+     * @param nIdTask the id task
+     * @return an instance of {@link TaskEditRecordConfig}
+     */
+    TaskEditRecordConfig findByPrimaryKey( int nIdTask );
+
+    /**
+     * Get all configs
+     * @return a list of {@link TaskEditRecordConfig}
+     */
+    List<TaskEditRecordConfig> findAll(  );
 }

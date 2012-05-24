@@ -59,6 +59,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void insert( TaskEditRecordConfig config, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
@@ -76,6 +77,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void store( TaskEditRecordConfig config, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
@@ -93,6 +95,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public TaskEditRecordConfig load( int nIdTask, Plugin plugin )
     {
         TaskEditRecordConfig config = null;
@@ -120,6 +123,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete( int nIdTask, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
@@ -132,6 +136,7 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<TaskEditRecordConfig> loadAll( Plugin plugin )
     {
         List<TaskEditRecordConfig> configList = new ArrayList<TaskEditRecordConfig>(  );

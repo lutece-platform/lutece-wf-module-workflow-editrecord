@@ -33,18 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service.taskinfo;
 
-import fr.paris.lutece.plugins.workflow.business.ResourceHistory;
-import fr.paris.lutece.plugins.workflow.business.ResourceHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordPlugin;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.signrequest.EditRecordRequestAuthenticatorService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
-import fr.paris.lutece.plugins.workflow.service.WorkflowPlugin;
 import fr.paris.lutece.plugins.workflow.service.taskinfo.AbstractTaskInfoProvider;
-import fr.paris.lutece.plugins.workflow.service.taskinfo.ITaskInfoProvider;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.service.content.XPageAppService;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
@@ -54,6 +49,8 @@ import org.apache.commons.lang.StringUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -65,22 +62,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
 {
-    private static final String BEAN_EDIT_RECORD_TASK_INFO_PROVIDER = "workflow-editrecord.editRecordTaskInfoProvider";
     private static final String PROPERTY_BASE_URL_USE_PROPERTY = "workflow-editrecord.base_url.use_property";
-
-    /**
-     * Get the instance of the provider
-     * @return the instance of the provider
-     */
-    public static ITaskInfoProvider getProvider(  )
-    {
-        return (ITaskInfoProvider) SpringContextService.getPluginBean( EditRecordPlugin.PLUGIN_NAME,
-            BEAN_EDIT_RECORD_TASK_INFO_PROVIDER );
-    }
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getPluginName(  )
     {
         return EditRecordPlugin.PLUGIN_NAME;
@@ -89,11 +78,11 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request )
     {
         String strInfo = StringUtils.EMPTY;
-        Plugin pluginWorkflow = PluginService.getPlugin( WorkflowPlugin.PLUGIN_NAME );
-        ResourceHistory resourceHistory = ResourceHistoryHome.findByPrimaryKey( nIdHistory, pluginWorkflow );
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
 
         if ( resourceHistory != null )
         {

@@ -33,11 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service;
 
+import fr.paris.lutece.plugins.workflow.modules.editrecord.business.ITaskEditRecordConfigDAO;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig;
-import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfigHome;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.plugin.PluginService;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 
 /**
@@ -45,76 +49,63 @@ import java.util.List;
  * TaskEditRecordConfigService
  *
  */
-public final class TaskEditRecordConfigService
+public class TaskEditRecordConfigService implements ITaskEditRecordConfigService
 {
-    private static final String BEAN_TASK_NOTIFY_CRM_CONFIG_SERVICE = "workflow-editrecord.taskEditRecordConfigService";
+    public static final String BEAN_SERVICE = "workflow-editrecord.taskEditRecordConfigService";
+    @Inject
+    private ITaskEditRecordConfigDAO _taskEditRecordConfigDAO;
 
     /**
-     * Private constructor
+     * {@inheritDoc}
      */
-    private TaskEditRecordConfigService(  )
-    {
-    }
-
-    /**
-     * Get the instance of {@link TaskEditRecordConfigService}
-     * @return the instance of {@link TaskEditRecordConfigService}
-     */
-    public static TaskEditRecordConfigService getService(  )
-    {
-        return (TaskEditRecordConfigService) SpringContextService.getPluginBean( EditRecordPlugin.PLUGIN_NAME,
-            BEAN_TASK_NOTIFY_CRM_CONFIG_SERVICE );
-    }
-
-    /**
-     * Create a new config
-     * @param config the config
-     */
+    @Override
+    @Transactional( "workflow-editrecord.transactionManager" )
     public void create( TaskEditRecordConfig config )
     {
         if ( config != null )
         {
-            TaskEditRecordConfigHome.create( config );
+            _taskEditRecordConfigDAO.insert( config, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
         }
     }
 
     /**
-     * Update a config
-     * @param config the config
+     * {@inheritDoc}
      */
+    @Override
+    @Transactional( "workflow-editrecord.transactionManager" )
     public void update( TaskEditRecordConfig config )
     {
         if ( config != null )
         {
-            TaskEditRecordConfigHome.update( config );
+            _taskEditRecordConfigDAO.store( config, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
         }
     }
 
     /**
-     * Remove a config
-     * @param nIdTask the task id
+     * {@inheritDoc}
      */
+    @Override
+    @Transactional( "workflow-editrecord.transactionManager" )
     public void remove( int nIdTask )
     {
-        TaskEditRecordConfigHome.remove( nIdTask );
+        _taskEditRecordConfigDAO.delete( nIdTask, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
     }
 
     /**
-     * Find a config
-     * @param nIdTask the id task
-     * @return an instance of {@link TaskEditRecordConfig}
+     * {@inheritDoc}
      */
+    @Override
     public TaskEditRecordConfig findByPrimaryKey( int nIdTask )
     {
-        return TaskEditRecordConfigHome.findByPrimaryKey( nIdTask );
+        return _taskEditRecordConfigDAO.load( nIdTask, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
     }
 
     /**
-     * Get all configs
-     * @return a list of {@link TaskEditRecordConfig}
+     * {@inheritDoc}
      */
+    @Override
     public List<TaskEditRecordConfig> findAll(  )
     {
-        return TaskEditRecordConfigHome.findAll(  );
+        return _taskEditRecordConfigDAO.loadAll( PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
     }
 }

@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service;
 
-import fr.paris.lutece.plugins.workflow.modules.editrecord.service.taskinfo.EditRecordTaskInfoProvider;
-import fr.paris.lutece.plugins.workflow.service.taskinfo.TaskInfoManager;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 
 
@@ -46,12 +44,4 @@ import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 public class EditRecordPlugin extends PluginDefaultImplementation
 {
     public static final String PLUGIN_NAME = "workflow-editrecord";
-
-    /**
-     * Initialise the EditRecordPlugin
-     */
-    public void init(  )
-    {
-        TaskInfoManager.getManager(  ).registerProvider( EditRecordTaskInfoProvider.getProvider(  ) );
-    }
 }
