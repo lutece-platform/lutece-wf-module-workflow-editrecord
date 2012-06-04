@@ -33,11 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordPlugin;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -45,7 +43,7 @@ import java.util.List;
  * TaskEditRecordConfigDAO
  *
  */
-public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
+public class TaskEditRecordConfigDAO implements ITaskConfigDAO<TaskEditRecordConfig>
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_state_after_edition, default_message FROM task_edit_record_cf " +
         " WHERE id_task = ? ";
@@ -54,15 +52,14 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE task_edit_record_cf SET id_state_after_edition = ?, default_message = ? " +
         " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM task_edit_record_cf WHERE id_task = ? ";
-    private static final String SQL_QUERY_FIND_ALL = " SELECT id_task, id_state_after_edition, default_message FROM task_edit_record_cf ";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskEditRecordConfig config, Plugin plugin )
+    public synchronized void insert( TaskEditRecordConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, EditRecordPlugin.getPlugin(  ) );
 
         int nIndex = 1;
 
@@ -78,9 +75,9 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void store( TaskEditRecordConfig config, Plugin plugin )
+    public void store( TaskEditRecordConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, EditRecordPlugin.getPlugin(  ) );
 
         int nIndex = 1;
 
@@ -96,10 +93,10 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public TaskEditRecordConfig load( int nIdTask, Plugin plugin )
+    public TaskEditRecordConfig load( int nIdTask )
     {
         TaskEditRecordConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, EditRecordPlugin.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdTask );
 
@@ -124,39 +121,12 @@ public class TaskEditRecordConfigDAO implements ITaskEditRecordConfigDAO
      * {@inheritDoc}
      */
     @Override
-    public void delete( int nIdTask, Plugin plugin )
+    public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, EditRecordPlugin.getPlugin(  ) );
 
         daoUtil.setInt( 1, nIdTask );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<TaskEditRecordConfig> loadAll( Plugin plugin )
-    {
-        List<TaskEditRecordConfig> configList = new ArrayList<TaskEditRecordConfig>(  );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_ALL, plugin );
-
-        daoUtil.executeQuery(  );
-
-        int nIndex = 1;
-
-        if ( daoUtil.next(  ) )
-        {
-            TaskEditRecordConfig config = new TaskEditRecordConfig(  );
-            config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setIdStateAfterEdition( daoUtil.getInt( nIndex++ ) );
-            config.setDefaultMessage( daoUtil.getString( nIndex++ ) );
-            configList.add( config );
-        }
-
-        daoUtil.free(  );
-
-        return configList;
     }
 }

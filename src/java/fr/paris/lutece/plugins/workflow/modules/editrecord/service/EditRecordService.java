@@ -60,6 +60,7 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
@@ -85,6 +86,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -110,7 +112,8 @@ public class EditRecordService implements IEditRecordService
     @Inject
     private IResourceHistoryService _resourceHistoryService;
     @Inject
-    private ITaskEditRecordConfigService _taskEditRecordConfigService;
+    @Named( EditRecordConstants.BEAN_EDIT_RECORD_CONFIG_SERVICE )
+    private ITaskConfigService _taskEditRecordConfigService;
     @Inject
     private IActionService _actionService;
 
@@ -143,7 +146,7 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     public void create( EditRecord editRecord )
     {
         if ( editRecord != null )
@@ -162,7 +165,7 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     public void update( EditRecord editRecord )
     {
         if ( editRecord != null )
@@ -209,7 +212,7 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     public void removeByIdHistory( int nIdHistory, int nIdTask )
     {
         EditRecord editRecord = find( nIdHistory, nIdTask );
@@ -226,7 +229,7 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     public void removeByIdTask( int nIdTask )
     {
         for ( EditRecord editRecord : findByIdTask( nIdTask ) )

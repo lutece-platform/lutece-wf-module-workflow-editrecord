@@ -50,7 +50,7 @@ public interface IEditRecordValueService
     * Create a new edit record value
     * @param editRecordValue the edit record value
     */
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void create( EditRecordValue editRecordValue );
 
     /**
@@ -64,6 +64,6 @@ public interface IEditRecordValueService
      * Remove EditRecordValue from a given id edit record
      * @param nIdHistory the id history
      */
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void remove( int nIdHistory );
 }

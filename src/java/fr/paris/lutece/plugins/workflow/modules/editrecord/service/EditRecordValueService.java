@@ -59,7 +59,7 @@ public class EditRecordValueService implements IEditRecordValueService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     public void create( EditRecordValue editRecordValue )
     {
         _editRecordValueDAO.insert( editRecordValue, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
@@ -78,7 +78,7 @@ public class EditRecordValueService implements IEditRecordValueService
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     public void remove( int nIdHistory )
     {
         _editRecordValueDAO.delete( nIdHistory, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );

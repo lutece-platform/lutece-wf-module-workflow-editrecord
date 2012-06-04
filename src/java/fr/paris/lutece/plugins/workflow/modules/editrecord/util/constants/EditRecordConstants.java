@@ -48,6 +48,9 @@ public final class EditRecordConstants
     public static final String USER_AUTO = "auto";
     public static final String SLASH = "/";
 
+    // BEANS
+    public static final String BEAN_EDIT_RECORD_CONFIG_SERVICE = "workflow-editrecord.taskEditRecordConfigService";
+
     // PROPERTIES
     public static final String PROPERTY_LABEL_STATE_AFTER_EDITION = "module.workflow.editrecord.task_edit_record_config.label_state_after_edition";
     public static final String PROPERTY_XPAGE_EDIT_RECORD_PAGETITLE = "module.workflow.editrecord.edit_record.page_title";

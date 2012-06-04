@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordVa
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
 
@@ -50,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,7 +66,8 @@ public class TaskEditRecord extends Task
     @Inject
     private IEditRecordService _editRecordService;
     @Inject
-    private ITaskEditRecordConfigService _taskEditRecordConfigService;
+    @Named( EditRecordConstants.BEAN_EDIT_RECORD_CONFIG_SERVICE )
+    private ITaskConfigService _taskEditRecordConfigService;
     @Inject
     private IStateService _stateService;
 

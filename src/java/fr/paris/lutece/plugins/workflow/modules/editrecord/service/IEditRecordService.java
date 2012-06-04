@@ -77,14 +77,14 @@ public interface IEditRecordService
      * Create an edit record
      * @param editRecord the edit record
      */
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void create( EditRecord editRecord );
 
     /**
      * Update an edit record
      * @param editRecord the edit record
      */
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void update( EditRecord editRecord );
 
     /**
@@ -107,14 +107,14 @@ public interface IEditRecordService
      * @param nIdHistory the id history
      * @param nIdTask the id task
      */
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void removeByIdHistory( int nIdHistory, int nIdTask );
 
     /**
      * Remove an edit record by id task
      * @param nIdTask the id task
      */
-    @Transactional( "workflow-editrecord.transactionManager" )
+    @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void removeByIdTask( int nIdTask );
 
     // GET

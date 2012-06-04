@@ -37,24 +37,20 @@ import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.IEditRecordService;
-import fr.paris.lutece.plugins.workflow.modules.editrecord.service.ITaskEditRecordConfigService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
+import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.message.AdminMessage;
-import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,7 +60,7 @@ import javax.servlet.http.HttpServletRequest;
  * EditRecordTaskComponent
  *
  */
-public class EditRecordTaskComponent extends TaskComponent
+public class EditRecordTaskComponent extends AbstractTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_EDIT_RECORD_CONFIG = "admin/plugins/workflow/modules/editrecord/task_edit_record_config.html";
@@ -75,60 +71,8 @@ public class EditRecordTaskComponent extends TaskComponent
     @Inject
     private IEditRecordService _editRecordService;
     @Inject
-    private ITaskEditRecordConfigService _taskEditRecordConfigService;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
-    {
-        String strError = null;
-        String strIdStateAfterEdition = request.getParameter( EditRecordConstants.PARAMETER_ID_STATE );
-        String strDefaultMessage = request.getParameter( EditRecordConstants.PARAMETER_DEFAULT_MESSAGE );
-        String strField = StringUtils.EMPTY;
-
-        if ( StringUtils.isNotBlank( strIdStateAfterEdition ) && StringUtils.isNumeric( strIdStateAfterEdition ) )
-        {
-            int nIdStateAfterEdition = Integer.parseInt( strIdStateAfterEdition );
-            boolean bCreate = false;
-
-            TaskEditRecordConfig editRecordConfig = _taskEditRecordConfigService.findByPrimaryKey( task.getId(  ) );
-
-            if ( editRecordConfig == null )
-            {
-                editRecordConfig = new TaskEditRecordConfig(  );
-                editRecordConfig.setIdTask( task.getId(  ) );
-                bCreate = true;
-            }
-
-            editRecordConfig.setIdStateAfterEdition( nIdStateAfterEdition );
-            editRecordConfig.setDefaultMessage( StringUtils.isNotBlank( strDefaultMessage ) ? strDefaultMessage
-                                                                                            : StringUtils.EMPTY );
-
-            if ( bCreate )
-            {
-                _taskEditRecordConfigService.create( editRecordConfig );
-            }
-            else
-            {
-                _taskEditRecordConfigService.update( editRecordConfig );
-            }
-        }
-        else
-        {
-            strField = I18nService.getLocalizedString( EditRecordConstants.PROPERTY_LABEL_STATE_AFTER_EDITION, locale );
-        }
-
-        if ( StringUtils.isNotBlank( strField ) )
-        {
-            Object[] tabRequiredFields = { strField };
-            strError = AdminMessageService.getMessageUrl( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD,
-                    tabRequiredFields, AdminMessage.TYPE_STOP );
-        }
-
-        return strError;
-    }
+    @Named( EditRecordConstants.BEAN_EDIT_RECORD_CONFIG_SERVICE )
+    private ITaskConfigService _taskEditRecordConfigService;
 
     /**
      * {@inheritDoc}

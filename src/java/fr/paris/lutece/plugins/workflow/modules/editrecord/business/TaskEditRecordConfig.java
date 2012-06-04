@@ -33,35 +33,23 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.business;
 
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 
 /**
  *
  * TaskEditRecordConfig
  *
  */
-public class TaskEditRecordConfig
+public class TaskEditRecordConfig extends TaskConfig
 {
-    private int _nIdTask;
+    @NotNull
+    @Min( 1 )
     private int _nIdStateAfterEdition;
     private String _strDefaultMessage;
-
-    /**
-     * Get the ID task
-     * @return id Task
-     */
-    public int getIdTask(  )
-    {
-        return _nIdTask;
-    }
-
-    /**
-     * Set id Task
-     * @param nIdTask id task
-     */
-    public void setIdTask( int nIdTask )
-    {
-        _nIdTask = nIdTask;
-    }
 
     /**
      * Set the id state after edition

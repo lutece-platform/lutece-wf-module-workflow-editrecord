@@ -1,9 +1,9 @@
-<#assign id_state_after_edition = -1>
-<#assign default_message = ''>
+<#assign idStateAfterEdition = -1>
+<#assign defaultMessage = ''>
 <#if config?exists>
-	<#assign id_state_after_edition = config.idStateAfterEdition>
+	<#assign idStateAfterEdition = config.idStateAfterEdition>
 	<#if config.defaultMessage??>
-		<#assign default_message = config.defaultMessage>
+		<#assign defaultMessage = config.defaultMessage>
 	</#if>
 </#if>
 
@@ -11,14 +11,14 @@
 <div>
 	<br />
 	<p>
-		<label for="id_state">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition} * :</label>
-		<@combo name="id_state" items=list_states default_value=id_state_after_edition />
+		<label for="idStateAfterEdition">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition} * :</label>
+		<@combo name="idStateAfterEdition" items=list_states default_value=idStateAfterEdition />
 		<br/><label>&nbsp;</label>
 		#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition_comment}
 	</p>
 	<p>
-		<label for="default_message">#i18n{module.workflow.editrecord.task_edit_record_config.label_default_message} :</label>
-		<textarea name="default_message" rows="4" cols="80">${default_message}</textarea>
+		<label for="defaultMessage">#i18n{module.workflow.editrecord.task_edit_record_config.label_default_message} :</label>
+		<textarea name="defaultMessage" rows="4" cols="80">${defaultMessage}</textarea>
 	</p>
 	<br />
 </div>

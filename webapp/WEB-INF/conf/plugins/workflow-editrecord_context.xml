@@ -20,7 +20,8 @@
 	<bean id="workflow-editrecord.editRecordValueDAO" class="fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValueDAO" />
 
 	<!-- Services -->
-	<bean id="workflow-editrecord.taskEditRecordConfigService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.TaskEditRecordConfigService" />
+	<bean id="workflow-editrecord.taskEditRecordConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+		p:taskConfigDAO-ref="workflow-editrecord.taskEditRecordConfigDAO" />
 	<bean id="workflow-editrecord.editRecordValueService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordValueService" />
 	<bean id="workflow-editrecord.editRecordService" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordService" />
 
@@ -29,11 +30,14 @@
 		p:key="taskEditRecord"
 		p:titleI18nKey="module.workflow.editrecord.task_edit_record_title"
 		p:beanName="workflow-editrecord.taskEditRecord"
+		p:configBeanName="workflow-editrecord.taskEditRecordConfig"
 		p:configRequired="true"
 		p:formTaskRequired="true" />
 	<bean id="workflow-editrecord.taskEditRecord" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.TaskEditRecord" scope="prototype" />
+	<bean id="workflow-editrecord.taskEditRecordConfig" class="fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditRecordConfig" scope="prototype" />
 	<bean id="workflow-editrecord.editRecordTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.editrecord.web.EditRecordTaskComponent"
-		p:taskType-ref="workflow-editrecord.taskTypeEditRecord" />
+		p:taskType-ref="workflow-editrecord.taskTypeEditRecord"
+		p:taskConfigService-ref="workflow-editrecord.taskEditRecordConfigService" />
 	
 	<!-- TaskInfoProvider -->
 	<bean id="workflow-editrecord.editRecordTaskInfoProvider" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.taskinfo.EditRecordTaskInfoProvider"
