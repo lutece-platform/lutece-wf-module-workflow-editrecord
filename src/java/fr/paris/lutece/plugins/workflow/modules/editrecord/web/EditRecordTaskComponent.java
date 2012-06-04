@@ -39,8 +39,8 @@ import fr.paris.lutece.plugins.workflow.modules.editrecord.business.TaskEditReco
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.IEditRecordService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.ITaskEditRecordConfigService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
-import fr.paris.lutece.plugins.workflow.web.task.TaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
