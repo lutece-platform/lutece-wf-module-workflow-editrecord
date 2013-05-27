@@ -6,19 +6,9 @@
 		<#assign defaultMessage = config.defaultMessage>
 	</#if>
 </#if>
-
-<h2>#i18n{module.workflow.editrecord.task_edit_record_config.title}</h2>
-<div>
-	<br />
-	<p>
-		<label for="idStateAfterEdition">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition} * :</label>
-		<@combo name="idStateAfterEdition" items=list_states default_value=idStateAfterEdition />
-		<br/><label>&nbsp;</label>
-		#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition_comment}
-	</p>
-	<p>
-		<label for="defaultMessage">#i18n{module.workflow.editrecord.task_edit_record_config.label_default_message} :</label>
-		<textarea name="defaultMessage" rows="4" cols="80">${defaultMessage}</textarea>
-	</p>
-	<br />
-</div>
+<p class="lead">#i18n{module.workflow.editrecord.task_edit_record_config.title}</p>
+<label for="idStateAfterEdition">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition} *</label>
+<@combo name="idStateAfterEdition" items=list_states default_value=idStateAfterEdition />
+<p class="help-block">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition_comment}</p>
+<label for="defaultMessage">#i18n{module.workflow.editrecord.task_edit_record_config.label_default_message}</label>
+<textarea name="defaultMessage" rows="4" cols="80">${defaultMessage}</textarea>

@@ -1,30 +1,21 @@
 <#if config?exists>
     <#if edit_record?exists>
-    	<div class="clear">
-	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_message} : </label>
-	    	<#if edit_record.message??>${edit_record.message}</#if>
-	    </div>
-    	<div class="clear">
-	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_is_complete} : </label>
-	    	<#if edit_record.isComplete(  )>
-	    		#i18n{module.workflow.editrecord.task_edit_record_information.label_completed}
-	    	<#else>
-	    		#i18n{module.workflow.editrecord.task_edit_record_information.label_not_completed}
-	    	</#if>
-	    </div>
-    </#if>
+    	<p>#i18n{module.workflow.editrecord.task_edit_record_information.label_message} : 
+	    <#if edit_record.message??>${edit_record.message}</#if></p>
+		<p>#i18n{module.workflow.editrecord.task_edit_record_information.label_is_complete}</p>
+	    <#if edit_record.isComplete(  )>
+	    	<div class="alert alert-success">#i18n{module.workflow.editrecord.task_edit_record_information.label_completed}</div>
+		<#else>
+	    	<div class="alert alert-warning">#i18n{module.workflow.editrecord.task_edit_record_information.label_not_completed}</div>
+		</#if>
+	</#if>
     <#if list_entries?exists && list_entries?has_content>
-    	<div class="clear">
-	    	<label>#i18n{module.workflow.editrecord.task_edit_record_information.label_list_entries} :</label>
-	    	<#list list_entries as entry>
-	    		<#if entry_index != 0>
-	    			<label>&nbsp;</label>
-	    		</#if>
-	    		${entry.title}
-	    		<#if entry_has_next>
-	    			<br />
-	    		</#if>
-	    	</#list>
-    	</div>
+    	<p>#i18n{module.workflow.editrecord.task_edit_record_information.label_list_entries}</p>
+	    <#list list_entries as entry>
+	   		<span>${entry.title}</span>
+	   		<#if entry_has_next>
+	   			<br />
+	   		</#if>
+		</#list>
     </#if>
 </#if>
