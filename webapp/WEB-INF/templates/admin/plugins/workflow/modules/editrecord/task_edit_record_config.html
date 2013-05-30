@@ -7,8 +7,16 @@
 	</#if>
 </#if>
 <p class="lead">#i18n{module.workflow.editrecord.task_edit_record_config.title}</p>
-<label for="idStateAfterEdition">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition} *</label>
-<@combo name="idStateAfterEdition" items=list_states default_value=idStateAfterEdition />
-<p class="help-block">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition_comment}</p>
-<label for="defaultMessage">#i18n{module.workflow.editrecord.task_edit_record_config.label_default_message}</label>
-<textarea name="defaultMessage" rows="4" cols="80">${defaultMessage}</textarea>
+<div class="control-group">
+	<label class="control-label" for="idStateAfterEdition">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition} *</label>
+		<div class="controls">
+		<@comboWithParams name="idStateAfterEdition" default_value=idStateAfterEdition?string additionalParameters="class=\"input-xxlarge\"" items=list_states />
+		<span class="help-text">#i18n{module.workflow.editrecord.task_edit_record_config.label_state_after_edition_comment}</span>
+	</div>
+</div>	
+<div class="control-group">
+	<label class="control-label" for="defaultMessage">#i18n{module.workflow.editrecord.task_edit_record_config.label_default_message}</label>
+	<div class="controls">	
+		<textarea name="defaultMessage" rows="4" style="width:50%;">${defaultMessage}</textarea>
+		</div>
+</div>	
