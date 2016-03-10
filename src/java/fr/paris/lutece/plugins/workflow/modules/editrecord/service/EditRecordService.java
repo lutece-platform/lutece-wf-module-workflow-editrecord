@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.directory.business.EntryHome;
 import fr.paris.lutece.plugins.directory.business.EntryType;
 import fr.paris.lutece.plugins.directory.business.EntryTypeDownloadUrl;
 import fr.paris.lutece.plugins.directory.business.EntryTypeHome;
+import fr.paris.lutece.plugins.directory.business.Field;
 import fr.paris.lutece.plugins.directory.business.IEntry;
 import fr.paris.lutece.plugins.directory.business.Record;
 import fr.paris.lutece.plugins.directory.business.RecordField;
@@ -386,7 +387,7 @@ public class EditRecordService implements IEditRecordService
      */
     @Override
     public List<RecordField> getListRecordFieldsToNotEdit( HttpServletRequest request, int nIdRecord,
-        List<EditRecordValue> listEditRecordValues )
+        List<EditRecordValue> listEditRecordValues,Map<Integer,Field> mapFieldEntry )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
         List<RecordField> listRecordFieldsToNotEdit = new ArrayList<RecordField>(  );
@@ -396,7 +397,7 @@ public class EditRecordService implements IEditRecordService
         {
             // List record fields to not edit
             listRecordFieldsToNotEdit = RecordFieldHome.getRecordFieldSpecificList( listIdEntriesToNotEdit, nIdRecord,
-                    pluginDirectory );
+                    pluginDirectory,mapFieldEntry );
         }
 
         return listRecordFieldsToNotEdit;
@@ -525,8 +526,12 @@ public class EditRecordService implements IEditRecordService
         {
             String strUploadAction = DirectoryAsynchronousUploadHandler.getHandler(  ).getUploadAction( request );
             List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues(  ) );
+            
+            Map<Integer,Field> hashFields=DirectoryUtils.getMapFieldsOfListEntry(listEntriesToEdit, pluginDirectory) ;
+            
+            
             List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, record.getIdRecord(  ),
-                    editRecord.getListEditRecordValues(  ) );
+                    editRecord.getListEditRecordValues(  ),hashFields );
 
             for ( IEntry entry : listEntriesToEdit )
             {

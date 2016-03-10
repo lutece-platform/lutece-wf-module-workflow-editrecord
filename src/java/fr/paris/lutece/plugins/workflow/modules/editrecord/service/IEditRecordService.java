@@ -33,7 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.paris.lutece.plugins.directory.business.EntryType;
+import fr.paris.lutece.plugins.directory.business.Field;
 import fr.paris.lutece.plugins.directory.business.IEntry;
 import fr.paris.lutece.plugins.directory.business.Record;
 import fr.paris.lutece.plugins.directory.business.RecordField;
@@ -41,14 +50,6 @@ import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.util.ReferenceList;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -165,10 +166,11 @@ public interface IEditRecordService
      * @param request the HTTP request
      * @param nIdRecord the id record
      * @param listEditRecordValues the list of edit record values
+     *  @param mapFieldEntry a map containing all fields associated to the list of entry
      * @return a list of record fields
      */
     List<RecordField> getListRecordFieldsToNotEdit( HttpServletRequest request, int nIdRecord,
-        List<EditRecordValue> listEditRecordValues );
+        List<EditRecordValue> listEditRecordValues,Map<Integer,Field> mapFieldEntry );
 
     /**
      * Get the map id entry - list record fields
