@@ -14,20 +14,18 @@
 		<#assign index = 0>
 		<#list list_entries as entry>
 			<#if entry.shownInCompleteness>
-				<label class="checkbox">
-					<input type="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" />
-					${entry.title}
-				</label>
+				<@formGroup>
+					<@checkBox labelKey='${entry.title}' name='ids_entry_${config.idTask}' value='${entry.idEntry}' />
+				</@formGroup>
 			<#elseif entry.entryType.group>
 				<#if hasChildShownInCompleteness( entry )>
 					<fieldset>
 						<legend>${entry.title}</legend>
 						<#list entry.children as child >
 							<#if child.shownInCompleteness>
-								<label class="checkbox">
-									<input type="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" />
-									${child.title}
-								</label>	
+								<@formGroup>
+									<@checkBox labelKey='${child.title}' name='ids_entry_${config.idTask}' value='${child.idEntry}' />
+								</@formGroup>
 							</#if>
 						</#list>
 					</fieldset>
@@ -35,7 +33,8 @@
 			</#if>
 		</#list>
 		<hr>
-		<label for="message_${config.idTask}">#i18n{module.workflow.editrecord.task_edit_record_form.label_message}</label>
-		<textarea rows="6" class="input-xxlarge" name="message_${config.idTask}"><#if config.defaultMessage??>${config.defaultMessage}</#if></textarea>
+		<@formGroup labelFor='message_${config.idTask}' labelKey='#i18n{module.workflow.editrecord.task_edit_record_form.label_message}'>
+			<@input type='textarea' name='message_${config.idTask}'><#if config.defaultMessage??>${config.defaultMessage}</#if></@input>
+		</@formGroup>
 	</p>
 </#if>
