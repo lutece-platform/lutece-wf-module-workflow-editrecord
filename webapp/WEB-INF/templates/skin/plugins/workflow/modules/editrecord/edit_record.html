@@ -5,7 +5,7 @@
 		<#if edit_record.message?? && edit_record.message != ''>
 			<div class="alert alert-warning">${edit_record.message}</div>
 		</#if>
-		<form action="jsp/site/Portal.jsp" method="post" enctype="multipart/form-data">
+		<form class="form-horizontal" action="jsp/site/Portal.jsp" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="page" value="workflow-editrecord" />
 			<input type="hidden" name="id_history" value="${edit_record.idHistory}" />
 			<input type="hidden" name="id_task" value="${edit_record.idTask}" />
