@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-workflow-editrecord</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>3.0.3-SNAPSHOT</version>
+    <version>3.0.3</version>
     <name>Workflow edit record module</name>
 
     <repositories>
@@ -70,7 +70,7 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-wf-module-workflow-editrecord.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-wf-module-workflow-editrecord.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-wf-module-workflow-editrecord.git</url>
-      <tag>HEAD</tag>
+      <tag>lutece-wf-module-workflow-editrecord-3.0.3</tag>
   </scm>
     
 </project>
