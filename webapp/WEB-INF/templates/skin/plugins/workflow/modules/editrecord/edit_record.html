@@ -30,9 +30,9 @@
       						<#list entry.children as child >
       							<#assign entryKey=""+child.idEntry>
 	      						<#if map_id_entry_list_record_field?? && map_id_entry_list_record_field[entryKey]??>
-									${child.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+									${child.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],true )}
 								<#else>
-	      							${child.getHtmlFormEntry( locale,false )}
+	      							${child.getHtmlFormEntry( locale,true )}
 	      						</#if>
       						</#list>
       					</#if>
@@ -40,9 +40,9 @@
       			<#else>
       				<#assign entryKey=""+entry.idEntry>
 	      			<#if map_id_entry_list_record_field?? && map_id_entry_list_record_field[entryKey]??>
-	      				${entry.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],false )}
+	      				${entry.getHtmlFormEntry( locale,map_id_entry_list_record_field[entryKey],true )}
 					<#else>
-	      				${entry.getHtmlFormEntry( locale,false )}
+	      				${entry.getHtmlFormEntry( locale,true )}
 	      			</#if>	
       			</#if>
       		</#list>
