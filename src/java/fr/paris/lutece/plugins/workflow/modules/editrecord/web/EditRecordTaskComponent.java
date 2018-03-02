@@ -54,7 +54,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * EditRecordTaskComponent
@@ -78,8 +77,7 @@ public class EditRecordTaskComponent extends AbstractTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         return null;
     }
@@ -90,33 +88,30 @@ public class EditRecordTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( EditRecordConstants.MARK_CONFIG, _taskEditRecordConfigService.findByPrimaryKey( task.getId(  ) ) );
-        model.put( EditRecordConstants.MARK_LIST_STATES,
-            _editRecordService.getListStates( task.getAction(  ).getId(  ) ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( EditRecordConstants.MARK_CONFIG, _taskEditRecordConfigService.findByPrimaryKey( task.getId( ) ) );
+        model.put( EditRecordConstants.MARK_LIST_STATES, _editRecordService.getListStates( task.getAction( ).getId( ) ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_RECORD_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( task.getId(  ) );
+        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( task.getId( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( EditRecordConstants.MARK_CONFIG, config );
-        model.put( EditRecordConstants.MARK_LIST_ENTRIES,
-            _editRecordService.getFormListEntries( nIdResource, task.getId(  ), request ) );
+        model.put( EditRecordConstants.MARK_LIST_ENTRIES, _editRecordService.getFormListEntries( nIdResource, task.getId( ), request ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_RECORD_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -125,10 +120,10 @@ public class EditRecordTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        EditRecord editRecord = _editRecordService.find( nIdHistory, task.getId(  ) );
-        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( task.getId(  ) );
+        EditRecord editRecord = _editRecordService.find( nIdHistory, task.getId( ) );
+        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( task.getId( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( EditRecordConstants.MARK_CONFIG, config );
         model.put( EditRecordConstants.MARK_EDIT_RECORD, editRecord );
 
@@ -139,7 +134,7 @@ public class EditRecordTaskComponent extends AbstractTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_RECORD_INFORMATION, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -148,18 +143,18 @@ public class EditRecordTaskComponent extends AbstractTaskComponent
     @Override
     public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        StringBuffer sbXml = new StringBuffer(  );
-        EditRecord editRecord = _editRecordService.find( nIdHistory, task.getId(  ) );
+        StringBuffer sbXml = new StringBuffer( );
+        EditRecord editRecord = _editRecordService.find( nIdHistory, task.getId( ) );
 
         if ( editRecord != null )
         {
             XmlUtil.beginElement( sbXml, EditRecordConstants.TAG_EDIT_RECORD );
-            XmlUtil.addElement( sbXml, EditRecordConstants.TAG_MESSAGE, editRecord.getMessage(  ) );
+            XmlUtil.addElement( sbXml, EditRecordConstants.TAG_MESSAGE, editRecord.getMessage( ) );
             XmlUtil.beginElement( sbXml, EditRecordConstants.TAG_LIST_IDS_ENTRY );
 
-            for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
+            for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues( ) )
             {
-                XmlUtil.addElement( sbXml, EditRecordConstants.TAG_ID_ENTRY, editRecordValue.getIdEntry(  ) );
+                XmlUtil.addElement( sbXml, EditRecordConstants.TAG_ID_ENTRY, editRecordValue.getIdEntry( ) );
             }
 
             XmlUtil.endElement( sbXml, EditRecordConstants.TAG_LIST_IDS_ENTRY );
@@ -170,6 +165,6 @@ public class EditRecordTaskComponent extends AbstractTaskComponent
             XmlUtil.addEmptyElement( sbXml, EditRecordConstants.TAG_EDIT_RECORD, null );
         }
 
-        return sbXml.toString(  );
+        return sbXml.toString( );
     }
 }

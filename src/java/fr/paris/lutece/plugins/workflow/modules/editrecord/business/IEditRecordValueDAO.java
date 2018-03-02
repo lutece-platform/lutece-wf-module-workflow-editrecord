@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 /**
  *
  * IEditRecordValueDAO
@@ -47,23 +46,32 @@ public interface IEditRecordValueDAO
 {
     /**
      * Insert new record
-     * @param editRecordValue the EditRecordValue Object
-     * @param plugin the plugin
+     * 
+     * @param editRecordValue
+     *            the EditRecordValue Object
+     * @param plugin
+     *            the plugin
      */
     void insert( EditRecordValue editRecordValue, Plugin plugin );
 
     /**
      * Load a EditRecordValue by id edit record
-     * @param nIdHistory the id history
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param plugin
+     *            the plugin
      * @return a list of EditRecordValue
      */
     List<EditRecordValue> load( int nIdHistory, Plugin plugin );
 
     /**
      * Remove by id edit record
-     * @param nIdHistory the id history
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param plugin
+     *            the plugin
      */
     void delete( int nIdHistory, Plugin plugin );
 }

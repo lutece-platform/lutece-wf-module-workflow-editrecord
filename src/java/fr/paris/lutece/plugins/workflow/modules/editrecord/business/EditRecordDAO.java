@@ -39,7 +39,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * EditRecordDAO
@@ -47,12 +46,11 @@ import java.util.List;
  */
 public class EditRecordDAO implements IEditRecordDAO
 {
-    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_task, message, is_complete " +
-        " FROM task_edit_record WHERE id_history = ? AND id_task = ? ";
-    private static final String SQL_QUERY_SELECT_BY_ID_TASK = " SELECT id_history, id_task, message, is_complete " +
-        " FROM task_edit_record WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record ( id_history, id_task, message, is_complete ) " +
-        " VALUES ( ?,?,?,? ) ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_task, message, is_complete "
+            + " FROM task_edit_record WHERE id_history = ? AND id_task = ? ";
+    private static final String SQL_QUERY_SELECT_BY_ID_TASK = " SELECT id_history, id_task, message, is_complete "
+            + " FROM task_edit_record WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO task_edit_record ( id_history, id_task, message, is_complete ) " + " VALUES ( ?,?,?,? ) ";
     private static final String SQL_QUERY_DELETE_BY_ID_HISTORY = " DELETE FROM task_edit_record WHERE id_history = ? AND id_task = ? ";
     private static final String SQL_QUERY_DELETE_BY_TASK = " DELETE FROM task_edit_record WHERE id_task = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE task_edit_record SET message = ?, is_complete = ? WHERE id_history = ? AND id_task = ? ";
@@ -66,13 +64,13 @@ public class EditRecordDAO implements IEditRecordDAO
         int nIndex = 1;
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setInt( nIndex++, editRecord.getIdHistory(  ) );
-        daoUtil.setInt( nIndex++, editRecord.getIdTask(  ) );
-        daoUtil.setString( nIndex++, editRecord.getMessage(  ) );
-        daoUtil.setBoolean( nIndex++, editRecord.isComplete(  ) );
+        daoUtil.setInt( nIndex++, editRecord.getIdHistory( ) );
+        daoUtil.setInt( nIndex++, editRecord.getIdTask( ) );
+        daoUtil.setString( nIndex++, editRecord.getMessage( ) );
+        daoUtil.setBoolean( nIndex++, editRecord.isComplete( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -85,14 +83,14 @@ public class EditRecordDAO implements IEditRecordDAO
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
 
-        daoUtil.setString( nIndex++, editRecord.getMessage(  ) );
-        daoUtil.setBoolean( nIndex++, editRecord.isComplete(  ) );
+        daoUtil.setString( nIndex++, editRecord.getMessage( ) );
+        daoUtil.setBoolean( nIndex++, editRecord.isComplete( ) );
 
-        daoUtil.setInt( nIndex++, editRecord.getIdHistory(  ) );
-        daoUtil.setInt( nIndex++, editRecord.getIdTask(  ) );
+        daoUtil.setInt( nIndex++, editRecord.getIdHistory( ) );
+        daoUtil.setInt( nIndex++, editRecord.getIdTask( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -108,20 +106,20 @@ public class EditRecordDAO implements IEditRecordDAO
         daoUtil.setInt( nIndex++, nIdHistory );
         daoUtil.setInt( nIndex++, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             nIndex = 1;
 
-            editRecord = new EditRecord(  );
+            editRecord = new EditRecord( );
             editRecord.setIdHistory( daoUtil.getInt( nIndex++ ) );
             editRecord.setIdTask( daoUtil.getInt( nIndex++ ) );
             editRecord.setMessage( daoUtil.getString( nIndex++ ) );
             editRecord.setIsComplete( daoUtil.getBoolean( nIndex++ ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return editRecord;
     }
@@ -132,17 +130,17 @@ public class EditRecordDAO implements IEditRecordDAO
     @Override
     public List<EditRecord> loadByIdTask( int nIdTask, Plugin plugin )
     {
-        List<EditRecord> listEditRecords = new ArrayList<EditRecord>(  );
+        List<EditRecord> listEditRecords = new ArrayList<EditRecord>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TASK, plugin );
         daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             int nIndex = 1;
 
-            EditRecord editRecord = new EditRecord(  );
+            EditRecord editRecord = new EditRecord( );
             editRecord.setIdHistory( daoUtil.getInt( nIndex++ ) );
             editRecord.setIdTask( daoUtil.getInt( nIndex++ ) );
             editRecord.setMessage( daoUtil.getString( nIndex++ ) );
@@ -150,7 +148,7 @@ public class EditRecordDAO implements IEditRecordDAO
             listEditRecords.add( editRecord );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listEditRecords;
     }
@@ -166,8 +164,8 @@ public class EditRecordDAO implements IEditRecordDAO
         daoUtil.setInt( nIndex++, nIdHistory );
         daoUtil.setInt( nIndex++, nIdTask );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -178,7 +176,7 @@ public class EditRecordDAO implements IEditRecordDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
         daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

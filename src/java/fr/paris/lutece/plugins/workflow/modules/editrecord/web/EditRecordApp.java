@@ -65,7 +65,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
 /**
  *
  * EditRecordApp
@@ -82,8 +81,7 @@ public class EditRecordApp implements XPageApplication
     /**
      * {@inheritDoc}
      */
-    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin )
-        throws UserNotSignedException, SiteMessageException
+    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin ) throws UserNotSignedException, SiteMessageException
     {
         XPage page = null;
 
@@ -92,16 +90,16 @@ public class EditRecordApp implements XPageApplication
             String strIdHistory = request.getParameter( EditRecordConstants.PARAMETER_ID_HISTORY );
             String strIdTask = request.getParameter( EditRecordConstants.PARAMETER_ID_TASK );
 
-            if ( StringUtils.isNotBlank( strIdHistory ) && StringUtils.isNumeric( strIdHistory ) &&
-                    StringUtils.isNotBlank( strIdTask ) && StringUtils.isNumeric( strIdTask ) )
+            if ( StringUtils.isNotBlank( strIdHistory ) && StringUtils.isNumeric( strIdHistory ) && StringUtils.isNotBlank( strIdTask )
+                    && StringUtils.isNumeric( strIdTask ) )
             {
                 int nIdHistory = Integer.parseInt( strIdHistory );
                 int nIdTask = Integer.parseInt( strIdTask );
                 EditRecord editRecord = _editRecordService.find( nIdHistory, nIdTask );
 
-                if ( ( editRecord != null ) && !editRecord.isComplete(  ) )
+                if ( ( editRecord != null ) && !editRecord.isComplete( ) )
                 {
-                    if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale(  ) ) )
+                    if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale( ) ) )
                     {
                         doAction( request, editRecord );
                         page = getEditRecordPage( request, editRecord );
@@ -109,25 +107,25 @@ public class EditRecordApp implements XPageApplication
                     else
                     {
                         _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
-                            request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                                request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
                     }
                 }
                 else
                 {
-                    _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_RECORD_ALREADY_COMPLETED,
-                        SiteMessage.TYPE_INFO, request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                    _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_RECORD_ALREADY_COMPLETED, SiteMessage.TYPE_INFO,
+                            request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
                 }
             }
             else
             {
                 _editRecordService.setSiteMessage( request, Messages.MANDATORY_FIELDS, SiteMessage.TYPE_STOP,
-                    request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                        request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
             }
         }
         else
         {
             _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
-                request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                    request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
         }
 
         return page;
@@ -135,30 +133,28 @@ public class EditRecordApp implements XPageApplication
 
     /**
      * Get the edit record page
-     * @param request the HTTP request
-     * @param editRecord the edit record
+     * 
+     * @param request
+     *            the HTTP request
+     * @param editRecord
+     *            the edit record
      * @return a XPage
-     * @throws SiteMessageException a site message if there is a problem
+     * @throws SiteMessageException
+     *             a site message if there is a problem
      */
-    private XPage getEditRecordPage( HttpServletRequest request, EditRecord editRecord )
-        throws SiteMessageException
+    private XPage getEditRecordPage( HttpServletRequest request, EditRecord editRecord ) throws SiteMessageException
     {
-        XPage page = new XPage(  );
+        XPage page = new XPage( );
 
-        List<IEntry> listEntries = _editRecordService.getListEntriesToEdit( request,
-                editRecord.getListEditRecordValues(  ) );
+        List<IEntry> listEntries = _editRecordService.getListEntriesToEdit( request, editRecord.getListEditRecordValues( ) );
 
         /**
-         * Map of <idEntry, RecordFields>
-         *         1) The user has uploaded/deleted a file
-         *                 - The updated map is stored in the session
-         *  2) The user has not uploaded/delete a file
-         *          - The map is filled with the data from the database
-         *          - The asynchronous uploaded files map is reinitialized
+         * Map of <idEntry, RecordFields> 1) The user has uploaded/deleted a file - The updated map is stored in the session 2) The user has not uploaded/delete
+         * a file - The map is filled with the data from the database - The asynchronous uploaded files map is reinitialized
          */
         Map<String, List<RecordField>> mapRecordFields = null;
 
-        // Get the map of <idEntry, RecordFields from session if it exists : 
+        // Get the map of <idEntry, RecordFields from session if it exists :
         /** 1) Case when the user has uploaded a file, the the map is stored in the session */
         HttpSession session = request.getSession( false );
 
@@ -174,47 +170,48 @@ public class EditRecordApp implements XPageApplication
         if ( mapRecordFields == null )
         {
             Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-            mapRecordFields = _editRecordService.getMapIdEntryListRecordField( listEntries, editRecord.getIdHistory(  ) );
+            mapRecordFields = _editRecordService.getMapIdEntryListRecordField( listEntries, editRecord.getIdHistory( ) );
             // Reinit the asynchronous uploaded file map
-            DirectoryAsynchronousUploadHandler.getHandler(  ).reinitMap( request, mapRecordFields, pluginDirectory );
+            DirectoryAsynchronousUploadHandler.getHandler( ).reinitMap( request, mapRecordFields, pluginDirectory );
         }
 
-        Record record = _editRecordService.getRecordFromIdHistory( editRecord.getIdHistory(  ) );
+        Record record = _editRecordService.getRecordFromIdHistory( editRecord.getIdHistory( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( EditRecordConstants.MARK_EDIT_RECORD, editRecord );
         model.put( EditRecordConstants.MARK_LIST_ENTRIES, listEntries );
         model.put( EditRecordConstants.MARK_MAP_ID_ENTRY_LIST_RECORD_FIELD, mapRecordFields );
         model.put( EditRecordConstants.MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( EditRecordConstants.MARK_LOCALE, request.getLocale(  ) );
+        model.put( EditRecordConstants.MARK_LOCALE, request.getLocale( ) );
         model.put( EditRecordConstants.MARK_URL_RETURN, request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
         model.put( EditRecordConstants.MARK_SIGNATURE, request.getParameter( EditRecordConstants.PARAMETER_SIGNATURE ) );
         model.put( EditRecordConstants.MARK_TIMESTAMP, request.getParameter( EditRecordConstants.PARAMETER_TIMESTAMP ) );
 
         if ( record != null )
         {
-            model.put( EditRecordConstants.MARK_ID_DIRECTORY_RECORD, record.getIdRecord(  ) );
+            model.put( EditRecordConstants.MARK_ID_DIRECTORY_RECORD, record.getIdRecord( ) );
         }
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_EDIT_RECORD, request.getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_EDIT_RECORD, request.getLocale( ), model );
 
-        page.setTitle( I18nService.getLocalizedString( EditRecordConstants.PROPERTY_XPAGE_EDIT_RECORD_PAGETITLE,
-                request.getLocale(  ) ) );
-        page.setPathLabel( I18nService.getLocalizedString( EditRecordConstants.PROPERTY_XPAGE_EDIT_RECORD_PATHLABEL,
-                request.getLocale(  ) ) );
-        page.setContent( template.getHtml(  ) );
+        page.setTitle( I18nService.getLocalizedString( EditRecordConstants.PROPERTY_XPAGE_EDIT_RECORD_PAGETITLE, request.getLocale( ) ) );
+        page.setPathLabel( I18nService.getLocalizedString( EditRecordConstants.PROPERTY_XPAGE_EDIT_RECORD_PATHLABEL, request.getLocale( ) ) );
+        page.setContent( template.getHtml( ) );
 
         return page;
     }
 
     /**
      * Do action
-     * @param request HttpServletRequest
-     * @param editRecord edit record
-     * @throws SiteMessageException site message if edition is complete
+     * 
+     * @param request
+     *            HttpServletRequest
+     * @param editRecord
+     *            edit record
+     * @throws SiteMessageException
+     *             site message if edition is complete
      */
-    private void doAction( HttpServletRequest request, EditRecord editRecord )
-        throws SiteMessageException
+    private void doAction( HttpServletRequest request, EditRecord editRecord ) throws SiteMessageException
     {
         String strAction = request.getParameter( EditRecordConstants.PARAMETER_ACTION );
 
@@ -226,10 +223,8 @@ public class EditRecordApp implements XPageApplication
                 {
                     // Back to home page
                     String strUrlReturn = request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN );
-                    strUrlReturn = StringUtils.isNotBlank( strUrlReturn ) ? strUrlReturn
-                                                                          : AppPathService.getBaseUrl( request );
-                    _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_EDITION_COMPLETE,
-                        SiteMessage.TYPE_INFO, strUrlReturn );
+                    strUrlReturn = StringUtils.isNotBlank( strUrlReturn ) ? strUrlReturn : AppPathService.getBaseUrl( request );
+                    _editRecordService.setSiteMessage( request, EditRecordConstants.MESSAGE_EDITION_COMPLETE, SiteMessage.TYPE_INFO, strUrlReturn );
                 }
             }
         }
@@ -237,21 +232,24 @@ public class EditRecordApp implements XPageApplication
 
     /**
      * Do edit a record
-     * @param request the HTTP request
-     * @param editRecord the edit record
+     * 
+     * @param request
+     *            the HTTP request
+     * @param editRecord
+     *            the edit record
      * @return true if the record must be updated, false otherwise
-     * @throws SiteMessageException a site message if there is a problem
+     * @throws SiteMessageException
+     *             a site message if there is a problem
      */
-    private boolean doEditRecord( HttpServletRequest request, EditRecord editRecord )
-        throws SiteMessageException
+    private boolean doEditRecord( HttpServletRequest request, EditRecord editRecord ) throws SiteMessageException
     {
-        if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale(  ) ) )
+        if ( _editRecordService.isRecordStateValid( editRecord, request.getLocale( ) ) )
         {
             // Modify record data
             if ( _editRecordService.doEditRecordData( request, editRecord ) )
             {
                 // Change record state
-                _editRecordService.doChangeRecordState( editRecord, request.getLocale(  ) );
+                _editRecordService.doChangeRecordState( editRecord, request.getLocale( ) );
                 // Change the status of the edit record to complete
                 _editRecordService.doCompleteEditRecord( editRecord );
 
@@ -263,7 +261,7 @@ public class EditRecordApp implements XPageApplication
         else
         {
             _editRecordService.setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP,
-                request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+                    request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
         }
 
         return false;

@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-
 /**
  *
  * TaskEditRecordConfig
@@ -53,7 +52,9 @@ public class TaskEditRecordConfig extends TaskConfig
 
     /**
      * Set the id state after edition
-     * @param nIdStateAfterEdition the id state after edition
+     * 
+     * @param nIdStateAfterEdition
+     *            the id state after edition
      */
     public void setIdStateAfterEdition( int nIdStateAfterEdition )
     {
@@ -62,16 +63,19 @@ public class TaskEditRecordConfig extends TaskConfig
 
     /**
      * Get the id state after edition
+     * 
      * @return the id state after edition
      */
-    public int getIdStateAfterEdition(  )
+    public int getIdStateAfterEdition( )
     {
         return _nIdStateAfterEdition;
     }
 
     /**
      * Set the default message
-     * @param strDefaultMessage the default message
+     * 
+     * @param strDefaultMessage
+     *            the default message
      */
     public void setDefaultMessage( String strDefaultMessage )
     {
@@ -80,9 +84,10 @@ public class TaskEditRecordConfig extends TaskConfig
 
     /**
      * Get the default message
+     * 
      * @return the default message
      */
-    public String getDefaultMessage(  )
+    public String getDefaultMessage( )
     {
         return _strDefaultMessage;
     }

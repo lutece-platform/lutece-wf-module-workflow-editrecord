@@ -39,7 +39,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 /**
  *
  *
@@ -47,22 +46,28 @@ import java.util.List;
 public interface IEditRecordValueService
 {
     /**
-    * Create a new edit record value
-    * @param editRecordValue the edit record value
-    */
+     * Create a new edit record value
+     * 
+     * @param editRecordValue
+     *            the edit record value
+     */
     @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void create( EditRecordValue editRecordValue );
 
     /**
      * Find edit record values from a given id history
-     * @param nIdHistory the id history
+     * 
+     * @param nIdHistory
+     *            the id history
      * @return a list of EditRecordValue
      */
     List<EditRecordValue> find( int nIdHistory );
 
     /**
      * Remove EditRecordValue from a given id edit record
-     * @param nIdHistory the id history
+     * 
+     * @param nIdHistory
+     *            the id history
      */
     @Transactional( EditRecordPlugin.BEAN_TRANSACTION_MANAGER )
     void remove( int nIdHistory );

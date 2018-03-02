@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.editrecord.service.signrequest;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.signrequest.AbstractPrivateKeyAuthenticator;
 
-
 /**
  *
  * EditRecordRequestAuthenticatorService
@@ -49,15 +48,16 @@ public final class EditRecordRequestAuthenticatorService
     /**
      * Private constructor
      */
-    private EditRecordRequestAuthenticatorService(  )
+    private EditRecordRequestAuthenticatorService( )
     {
     }
 
     /**
      * Get the instance of {@link AbstractPrivateKeyAuthenticator} defined in the context.xml
+     * 
      * @return the instance of {@link AbstractPrivateKeyAuthenticator}
      */
-    public static AbstractPrivateKeyAuthenticator getRequestAuthenticator(  )
+    public static AbstractPrivateKeyAuthenticator getRequestAuthenticator( )
     {
         return (AbstractPrivateKeyAuthenticator) SpringContextService.getBean( BEAN_EDIT_RECORD_REQUEST_AUTHENTICATOR );
     }

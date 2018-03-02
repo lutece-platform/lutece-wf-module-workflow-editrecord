@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 /**
  *
  * IEditRecordDAO
@@ -47,47 +46,67 @@ public interface IEditRecordDAO
 {
     /**
      * Insert new record
-     * @param editRecord the EditRecord Object
-     * @param plugin the plugin
+     * 
+     * @param editRecord
+     *            the EditRecord Object
+     * @param plugin
+     *            the plugin
      */
     void insert( EditRecord editRecord, Plugin plugin );
 
     /**
      * Insert new record
-     * @param editRecord the EditRecord Object
-     * @param plugin the plugin
+     * 
+     * @param editRecord
+     *            the EditRecord Object
+     * @param plugin
+     *            the plugin
      */
     void store( EditRecord editRecord, Plugin plugin );
 
     /**
      * Load a EditRecord by id history
-     * @param nIdHistory the id history
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return EditRecord Object
      */
     EditRecord load( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Load a list of EditRecord by id task
-     * @param nIdTask the id task
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the id task
+     * @param plugin
+     *            the plugin
      * @return a list of EditRecord
      */
     List<EditRecord> loadByIdTask( int nIdTask, Plugin plugin );
 
     /**
      * Remove EditRecord by id history
-     * @param nIdHistory the id history
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByIdHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove EditRecord by id task
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByIdTask( int nIdTask, Plugin plugin );
 }

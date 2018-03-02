@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.editrecord.business;
 
 import java.util.List;
 
-
 /**
  *
  * EditRecord
@@ -51,7 +50,9 @@ public class EditRecord
 
     /**
      * Set the id edit record
-     * @param nIdHistory the id edit record
+     * 
+     * @param nIdHistory
+     *            the id edit record
      */
     public void setIdHistory( int nIdHistory )
     {
@@ -60,25 +61,29 @@ public class EditRecord
 
     /**
      * Get the id edit record
+     * 
      * @return the id edit record
      */
-    public int getIdHistory(  )
+    public int getIdHistory( )
     {
         return _nIdHistory;
     }
 
     /**
      * Get the id task
+     * 
      * @return the task id
      */
-    public int getIdTask(  )
+    public int getIdTask( )
     {
         return _nIdTask;
     }
 
     /**
      * Set the task id
-     * @param nIdTask the task id
+     * 
+     * @param nIdTask
+     *            the task id
      */
     public void setIdTask( int nIdTask )
     {
@@ -87,7 +92,9 @@ public class EditRecord
 
     /**
      * Set the message
-     * @param strMessage the message
+     * 
+     * @param strMessage
+     *            the message
      */
     public void setMessage( String strMessage )
     {
@@ -96,16 +103,19 @@ public class EditRecord
 
     /**
      * Get the message
+     * 
      * @return the message
      */
-    public String getMessage(  )
+    public String getMessage( )
     {
         return _strMessage;
     }
 
     /**
      * Set the list of edit record values
-     * @param listEditRecordValues of edit record values
+     * 
+     * @param listEditRecordValues
+     *            of edit record values
      */
     public void setListEditRecordValues( List<EditRecordValue> listEditRecordValues )
     {
@@ -114,16 +124,19 @@ public class EditRecord
 
     /**
      * Get the list of record values
+     * 
      * @return the list of edit record values
      */
-    public List<EditRecordValue> getListEditRecordValues(  )
+    public List<EditRecordValue> getListEditRecordValues( )
     {
         return _listEditRecordValues;
     }
 
     /**
      * Set is complete
-     * @param bIsComplete true if it is complete, false otherwise
+     * 
+     * @param bIsComplete
+     *            true if it is complete, false otherwise
      */
     public void setIsComplete( boolean bIsComplete )
     {
@@ -132,9 +145,10 @@ public class EditRecord
 
     /**
      * Check if the record is complete
+     * 
      * @return true if it is complete, false otherwise
      */
-    public boolean isComplete(  )
+    public boolean isComplete( )
     {
         return _bIsComplete;
     }

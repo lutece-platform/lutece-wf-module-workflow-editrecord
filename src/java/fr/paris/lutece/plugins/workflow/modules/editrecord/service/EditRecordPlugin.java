@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 
-
 /**
  *
  * EditRecordPlugin
@@ -50,9 +49,10 @@ public class EditRecordPlugin extends PluginDefaultImplementation
 
     /**
      * Get the plugin
+     * 
      * @return the plugin
      */
-    public static Plugin getPlugin(  )
+    public static Plugin getPlugin( )
     {
         return PluginService.getPlugin( PLUGIN_NAME );
     }

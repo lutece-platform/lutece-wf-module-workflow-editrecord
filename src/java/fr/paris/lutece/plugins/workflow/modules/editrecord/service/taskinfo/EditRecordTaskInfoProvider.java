@@ -54,7 +54,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * EditRecordTaskInfoProvider
@@ -70,7 +69,7 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
      * {@inheritDoc}
      */
     @Override
-    public String getPluginName(  )
+    public String getPluginName( )
     {
         return EditRecordPlugin.PLUGIN_NAME;
     }
@@ -86,30 +85,28 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
 
         if ( resourceHistory != null )
         {
-            List<String> listElements = new ArrayList<String>(  );
+            List<String> listElements = new ArrayList<String>( );
             listElements.add( Integer.toString( nIdHistory ) );
             listElements.add( Integer.toString( nIdTask ) );
 
-            String strTimestamp = Long.toString( new Date(  ).getTime(  ) );
-            String strSignature = EditRecordRequestAuthenticatorService.getRequestAuthenticator(  )
-                                                                       .buildSignature( listElements, strTimestamp );
+            String strTimestamp = Long.toString( new Date( ).getTime( ) );
+            String strSignature = EditRecordRequestAuthenticatorService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
             StringBuilder sbUrl = new StringBuilder( getBaseUrl( request ) );
 
-            if ( !sbUrl.toString(  ).endsWith( EditRecordConstants.SLASH ) )
+            if ( !sbUrl.toString( ).endsWith( EditRecordConstants.SLASH ) )
             {
                 sbUrl.append( EditRecordConstants.SLASH );
             }
 
-            UrlItem url = new UrlItem( sbUrl.toString(  ) + AppPathService.getPortalUrl(  ) );
+            UrlItem url = new UrlItem( sbUrl.toString( ) + AppPathService.getPortalUrl( ) );
             url.addParameter( XPageAppService.PARAM_XPAGE_APP, EditRecordPlugin.PLUGIN_NAME );
             url.addParameter( EditRecordConstants.PARAMETER_ID_HISTORY, nIdHistory );
             url.addParameter( EditRecordConstants.PARAMETER_ID_TASK, nIdTask );
             url.addParameter( EditRecordConstants.PARAMETER_SIGNATURE, strSignature );
             url.addParameter( EditRecordConstants.PARAMETER_TIMESTAMP, strTimestamp );
-            url.addParameter( EditRecordConstants.PARAMETER_URL_RETURN,
-                AppPropertiesService.getProperty( EditRecordConstants.PROPERTY_URL_RETURN ) );
+            url.addParameter( EditRecordConstants.PARAMETER_URL_RETURN, AppPropertiesService.getProperty( EditRecordConstants.PROPERTY_URL_RETURN ) );
 
-            strInfo = url.getUrl(  );
+            strInfo = url.getUrl( );
         }
 
         return strInfo;
@@ -117,14 +114,16 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
 
     /**
      * Get the base url
-     * @param request the HTTP request
+     * 
+     * @param request
+     *            the HTTP request
      * @return the base url
      */
     private String getBaseUrl( HttpServletRequest request )
     {
         String strBaseUrl = StringUtils.EMPTY;
 
-        if ( ( request != null ) && !isBaseUrlFetchedInProperty(  ) )
+        if ( ( request != null ) && !isBaseUrlFetchedInProperty( ) )
         {
             strBaseUrl = AppPathService.getBaseUrl( request );
         }
@@ -143,9 +142,10 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
 
     /**
      * Check if the base url must be fetched in the config.properties file or in the request
+     * 
      * @return true if it must be fetched in the config.properties file
      */
-    private boolean isBaseUrlFetchedInProperty(  )
+    private boolean isBaseUrlFetchedInProperty( )
     {
         return Boolean.valueOf( AppPropertiesService.getProperty( PROPERTY_BASE_URL_USE_PROPERTY ) );
     }

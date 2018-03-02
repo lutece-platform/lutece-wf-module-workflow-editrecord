@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants;
 
-
 /**
  *
  * EditRecordConstants
@@ -106,7 +105,7 @@ public final class EditRecordConstants
     /**
      * Private constructor
      */
-    private EditRecordConstants(  )
+    private EditRecordConstants( )
     {
     }
 }

@@ -91,7 +91,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * EditRecordService
@@ -128,8 +127,7 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    public void setSiteMessage( HttpServletRequest request, String strMessage, int nTypeMessage, String strUrlReturn )
-        throws SiteMessageException
+    public void setSiteMessage( HttpServletRequest request, String strMessage, int nTypeMessage, String strUrlReturn ) throws SiteMessageException
     {
         if ( StringUtils.isNotBlank( strUrlReturn ) )
         {
@@ -154,9 +152,9 @@ public class EditRecordService implements IEditRecordService
         {
             _editRecordDAO.insert( editRecord, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
 
-            for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
+            for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues( ) )
             {
-                editRecordValue.setIdHistory( editRecord.getIdHistory(  ) );
+                editRecordValue.setIdHistory( editRecord.getIdHistory( ) );
                 _editRecordValueService.create( editRecordValue );
             }
         }
@@ -173,11 +171,11 @@ public class EditRecordService implements IEditRecordService
         {
             _editRecordDAO.store( editRecord, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
             // Remove its edit record values first
-            _editRecordValueService.remove( editRecord.getIdHistory(  ) );
+            _editRecordValueService.remove( editRecord.getIdHistory( ) );
 
-            for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues(  ) )
+            for ( EditRecordValue editRecordValue : editRecord.getListEditRecordValues( ) )
             {
-                editRecordValue.setIdHistory( editRecord.getIdHistory(  ) );
+                editRecordValue.setIdHistory( editRecord.getIdHistory( ) );
                 _editRecordValueService.create( editRecordValue );
             }
         }
@@ -189,12 +187,11 @@ public class EditRecordService implements IEditRecordService
     @Override
     public EditRecord find( int nIdHistory, int nIdTask )
     {
-        EditRecord editRecord = _editRecordDAO.load( nIdHistory, nIdTask,
-                PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
+        EditRecord editRecord = _editRecordDAO.load( nIdHistory, nIdTask, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
 
         if ( editRecord != null )
         {
-            editRecord.setListEditRecordValues( _editRecordValueService.find( editRecord.getIdHistory(  ) ) );
+            editRecord.setListEditRecordValues( _editRecordValueService.find( editRecord.getIdHistory( ) ) );
         }
 
         return editRecord;
@@ -220,9 +217,8 @@ public class EditRecordService implements IEditRecordService
 
         if ( editRecord != null )
         {
-            _editRecordValueService.remove( editRecord.getIdHistory(  ) );
-            _editRecordDAO.deleteByIdHistory( nIdHistory, nIdTask,
-                PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
+            _editRecordValueService.remove( editRecord.getIdHistory( ) );
+            _editRecordDAO.deleteByIdHistory( nIdHistory, nIdTask, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
         }
     }
 
@@ -235,7 +231,7 @@ public class EditRecordService implements IEditRecordService
     {
         for ( EditRecord editRecord : findByIdTask( nIdTask ) )
         {
-            _editRecordValueService.remove( editRecord.getIdHistory(  ) );
+            _editRecordValueService.remove( editRecord.getIdHistory( ) );
         }
 
         _editRecordDAO.deleteByIdTask( nIdTask, PluginService.getPlugin( EditRecordPlugin.PLUGIN_NAME ) );
@@ -249,19 +245,18 @@ public class EditRecordService implements IEditRecordService
     @Override
     public ReferenceList getListStates( int nIdAction )
     {
-        ReferenceList referenceListStates = new ReferenceList(  );
+        ReferenceList referenceListStates = new ReferenceList( );
         Action action = _actionService.findByPrimaryKey( nIdAction );
 
-        if ( ( action != null ) && ( action.getWorkflow(  ) != null ) )
+        if ( ( action != null ) && ( action.getWorkflow( ) != null ) )
         {
-            StateFilter stateFilter = new StateFilter(  );
-            stateFilter.setIdWorkflow( action.getWorkflow(  ).getId(  ) );
+            StateFilter stateFilter = new StateFilter( );
+            stateFilter.setIdWorkflow( action.getWorkflow( ).getId( ) );
 
             List<State> listStates = _stateService.getListStateByFilter( stateFilter );
 
             referenceListStates.addItem( DirectoryUtils.CONSTANT_ID_NULL, StringUtils.EMPTY );
-            referenceListStates.addAll( ReferenceList.convert( listStates, EditRecordConstants.ID,
-                    EditRecordConstants.NAME, true ) );
+            referenceListStates.addAll( ReferenceList.convert( listStates, EditRecordConstants.ID, EditRecordConstants.NAME, true ) );
         }
 
         return referenceListStates;
@@ -275,14 +270,13 @@ public class EditRecordService implements IEditRecordService
     {
         AdminUser user = AdminUserService.getAdminUser( request );
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-        List<IEntry> listEntries = new ArrayList<IEntry>(  );
+        List<IEntry> listEntries = new ArrayList<IEntry>( );
 
         Record record = RecordHome.findByPrimaryKey( nIdRecord, pluginDirectory );
 
         if ( record != null )
         {
-            listEntries = DirectoryUtils.getFormEntries( record.getDirectory(  ).getIdDirectory(  ), pluginDirectory,
-                    user );
+            listEntries = DirectoryUtils.getFormEntries( record.getDirectory( ).getIdDirectory( ), pluginDirectory, user );
         }
 
         return listEntries;
@@ -295,12 +289,12 @@ public class EditRecordService implements IEditRecordService
     public List<IEntry> getInformationListEntries( int nIdHistory )
     {
         List<EditRecordValue> listEditRecordValues = _editRecordValueService.find( nIdHistory );
-        List<IEntry> listEntries = new ArrayList<IEntry>(  );
+        List<IEntry> listEntries = new ArrayList<IEntry>( );
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
 
         for ( EditRecordValue editRecordValue : listEditRecordValues )
         {
-            IEntry entry = EntryHome.findByPrimaryKey( editRecordValue.getIdEntry(  ), pluginDirectory );
+            IEntry entry = EntryHome.findByPrimaryKey( editRecordValue.getIdEntry( ), pluginDirectory );
 
             if ( entry != null )
             {
@@ -318,15 +312,15 @@ public class EditRecordService implements IEditRecordService
     public List<IEntry> getListEntriesToEdit( HttpServletRequest request, List<EditRecordValue> listEditRecordValues )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-        List<IEntry> listEntries = new ArrayList<IEntry>(  );
+        List<IEntry> listEntries = new ArrayList<IEntry>( );
 
         for ( EditRecordValue editRecordValue : listEditRecordValues )
         {
-            IEntry entry = EntryHome.findByPrimaryKey( editRecordValue.getIdEntry(  ), pluginDirectory );
+            IEntry entry = EntryHome.findByPrimaryKey( editRecordValue.getIdEntry( ), pluginDirectory );
 
-            if ( entry.isRoleAssociated(  ) )
+            if ( entry.isRoleAssociated( ) )
             {
-                entry.setFields( DirectoryUtils.getAuthorizedFieldsByRole( request, entry.getFields(  ) ) );
+                entry.setFields( DirectoryUtils.getAuthorizedFieldsByRole( request, entry.getFields( ) ) );
             }
 
             listEntries.add( entry );
@@ -339,18 +333,17 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    public List<Integer> getListIdEntriesToNotEdit( HttpServletRequest request, int nIdRecord,
-        List<EditRecordValue> listEditRecordValues )
+    public List<Integer> getListIdEntriesToNotEdit( HttpServletRequest request, int nIdRecord, List<EditRecordValue> listEditRecordValues )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-        List<Integer> listIdEntriesToNotEdit = new ArrayList<Integer>(  );
+        List<Integer> listIdEntriesToNotEdit = new ArrayList<Integer>( );
         Record record = RecordHome.findByPrimaryKey( nIdRecord, pluginDirectory );
 
         if ( record != null )
         {
             // List all entries of the directory
-            EntryFilter eFilter = new EntryFilter(  );
-            eFilter.setIdDirectory( record.getDirectory(  ).getIdDirectory(  ) );
+            EntryFilter eFilter = new EntryFilter( );
+            eFilter.setIdDirectory( record.getDirectory( ).getIdDirectory( ) );
 
             List<IEntry> listEntries = EntryHome.getEntryList( eFilter, pluginDirectory );
 
@@ -364,7 +357,7 @@ public class EditRecordService implements IEditRecordService
 
                 for ( IEntry entryToEdit : listEntriesToEdit )
                 {
-                    if ( entry.getIdEntry(  ) == entryToEdit.getIdEntry(  ) )
+                    if ( entry.getIdEntry( ) == entryToEdit.getIdEntry( ) )
                     {
                         bIsEntryToEdit = true;
 
@@ -374,7 +367,7 @@ public class EditRecordService implements IEditRecordService
 
                 if ( !bIsEntryToEdit )
                 {
-                    listIdEntriesToNotEdit.add( entry.getIdEntry(  ) );
+                    listIdEntriesToNotEdit.add( entry.getIdEntry( ) );
                 }
             }
         }
@@ -386,18 +379,17 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    public List<RecordField> getListRecordFieldsToNotEdit( HttpServletRequest request, int nIdRecord,
-        List<EditRecordValue> listEditRecordValues,Map<Integer,Field> mapFieldEntry )
+    public List<RecordField> getListRecordFieldsToNotEdit( HttpServletRequest request, int nIdRecord, List<EditRecordValue> listEditRecordValues,
+            Map<Integer, Field> mapFieldEntry )
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-        List<RecordField> listRecordFieldsToNotEdit = new ArrayList<RecordField>(  );
+        List<RecordField> listRecordFieldsToNotEdit = new ArrayList<RecordField>( );
         List<Integer> listIdEntriesToNotEdit = getListIdEntriesToNotEdit( request, nIdRecord, listEditRecordValues );
 
-        if ( ( listIdEntriesToNotEdit != null ) && !listIdEntriesToNotEdit.isEmpty(  ) )
+        if ( ( listIdEntriesToNotEdit != null ) && !listIdEntriesToNotEdit.isEmpty( ) )
         {
             // List record fields to not edit
-            listRecordFieldsToNotEdit = RecordFieldHome.getRecordFieldSpecificList( listIdEntriesToNotEdit, nIdRecord,
-                    pluginDirectory,mapFieldEntry );
+            listRecordFieldsToNotEdit = RecordFieldHome.getRecordFieldSpecificList( listIdEntriesToNotEdit, nIdRecord, pluginDirectory, mapFieldEntry );
         }
 
         return listRecordFieldsToNotEdit;
@@ -412,7 +404,7 @@ public class EditRecordService implements IEditRecordService
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
         Record record = getRecordFromIdHistory( nIdHistory );
 
-        return DirectoryUtils.getMapIdEntryListRecordField( listEntries, record.getIdRecord(  ), pluginDirectory );
+        return DirectoryUtils.getMapIdEntryListRecordField( listEntries, record.getIdRecord( ), pluginDirectory );
     }
 
     /**
@@ -430,14 +422,14 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    public EntryType getEntryTypeDownloadUrl(  )
+    public EntryType getEntryTypeDownloadUrl( )
     {
         EntryType entryTypeDownloadUrl = null;
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
 
         for ( EntryType entryType : EntryTypeHome.getList( pluginDirectory ) )
         {
-            if ( EntryTypeDownloadUrl.class.getName(  ).equals( entryType.getClassName(  ) ) )
+            if ( EntryTypeDownloadUrl.class.getName( ).equals( entryType.getClassName( ) ) )
             {
                 entryTypeDownloadUrl = entryType;
 
@@ -457,13 +449,12 @@ public class EditRecordService implements IEditRecordService
         Record record = null;
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
 
-        if ( ( resourceHistory != null ) &&
-                Record.WORKFLOW_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ( resourceHistory != null ) && Record.WORKFLOW_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) )
         {
             Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
 
             // Record
-            record = RecordHome.findByPrimaryKey( resourceHistory.getIdResource(  ), pluginDirectory );
+            record = RecordHome.findByPrimaryKey( resourceHistory.getIdResource( ), pluginDirectory );
         }
 
         return record;
@@ -481,10 +472,10 @@ public class EditRecordService implements IEditRecordService
         if ( record != null )
         {
             Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-            RecordFieldFilter recordFieldFilter = new RecordFieldFilter(  );
-            recordFieldFilter.setIdDirectory( record.getDirectory(  ).getIdDirectory(  ) );
+            RecordFieldFilter recordFieldFilter = new RecordFieldFilter( );
+            recordFieldFilter.setIdDirectory( record.getDirectory( ).getIdDirectory( ) );
             recordFieldFilter.setIdEntry( nIdEntry );
-            recordFieldFilter.setIdRecord( record.getIdRecord(  ) );
+            recordFieldFilter.setIdRecord( record.getIdRecord( ) );
 
             listRecordFields = RecordFieldHome.getRecordFieldList( recordFieldFilter, pluginDirectory );
         }
@@ -501,7 +492,7 @@ public class EditRecordService implements IEditRecordService
         RecordField recordField = null;
         List<RecordField> listRecordField = getRecordFieldsList( nIdHistory, nIdEntry );
 
-        if ( ( listRecordField != null ) && !listRecordField.isEmpty(  ) )
+        if ( ( listRecordField != null ) && !listRecordField.isEmpty( ) )
         {
             recordField = listRecordField.get( 0 );
         }
@@ -515,46 +506,46 @@ public class EditRecordService implements IEditRecordService
      * {@inheritDoc}
      */
     @Override
-    public boolean doEditRecordData( HttpServletRequest request, EditRecord editRecord )
-        throws SiteMessageException
+    public boolean doEditRecordData( HttpServletRequest request, EditRecord editRecord ) throws SiteMessageException
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
 
-        Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
+        Record record = getRecordFromIdHistory( editRecord.getIdHistory( ) );
 
         if ( record != null )
         {
-            String strActionRelatedToFile = DirectoryAsynchronousUploadHandler.getHandler(  ).getUploadAction( request );
-            List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues(  ) );
-            
-            Map<Integer,Field> hashFields=DirectoryUtils.getMapFieldsOfListEntry(listEntriesToEdit, pluginDirectory) ;
-            
-            
-            List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, record.getIdRecord(  ),
-                    editRecord.getListEditRecordValues(  ),hashFields );
+            String strActionRelatedToFile = DirectoryAsynchronousUploadHandler.getHandler( ).getUploadAction( request );
+            List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues( ) );
+
+            Map<Integer, Field> hashFields = DirectoryUtils.getMapFieldsOfListEntry( listEntriesToEdit, pluginDirectory );
+
+            List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, record.getIdRecord( ), editRecord.getListEditRecordValues( ),
+                    hashFields );
 
             for ( IEntry entry : listEntriesToEdit )
             {
                 try
                 {
-                    DirectoryUtils.getDirectoryRecordFieldData( record, request, entry.getIdEntry(  ), true,
-                        listRecordFields, pluginDirectory, request.getLocale(  ) );
+                    DirectoryUtils.getDirectoryRecordFieldData( record, request, entry.getIdEntry( ), true, listRecordFields, pluginDirectory,
+                            request.getLocale( ) );
                 }
-                catch ( DirectoryErrorException error )
+                catch( DirectoryErrorException error )
                 {
                     if ( StringUtils.isBlank( strActionRelatedToFile ) )
                     {
-                        if ( error.isMandatoryError(  ) )
+                        if ( error.isMandatoryError( ) )
                         {
-                            Object[] tabRequiredFields = { error.getTitleField(  ) };
-                            SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD,
-                                tabRequiredFields, SiteMessage.TYPE_STOP );
+                            Object [ ] tabRequiredFields = {
+                                error.getTitleField( )
+                            };
+                            SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD, tabRequiredFields, SiteMessage.TYPE_STOP );
                         }
                         else
                         {
-                            Object[] tabRequiredFields = { error.getTitleField(  ), error.getErrorMessage(  ) };
-                            SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_DIRECTORY_ERROR,
-                                tabRequiredFields, SiteMessage.TYPE_STOP );
+                            Object [ ] tabRequiredFields = {
+                                    error.getTitleField( ), error.getErrorMessage( )
+                            };
+                            SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_DIRECTORY_ERROR, tabRequiredFields, SiteMessage.TYPE_STOP );
                         }
                     }
                 }
@@ -568,29 +559,28 @@ public class EditRecordService implements IEditRecordService
 
                 try
                 {
-                    DirectoryAsynchronousUploadHandler.getHandler(  )
-                                                      .doUploadAction( request, strActionRelatedToFile, mapListRecordFields );
+                    DirectoryAsynchronousUploadHandler.getHandler( ).doUploadAction( request, strActionRelatedToFile, mapListRecordFields );
                 }
-                catch ( DirectoryErrorException error )
+                catch( DirectoryErrorException error )
                 {
-                    if ( error.isMandatoryError(  ) )
+                    if ( error.isMandatoryError( ) )
                     {
-                        Object[] tabRequiredFields = { error.getTitleField(  ) };
-                        SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD,
-                            tabRequiredFields, SiteMessage.TYPE_STOP );
+                        Object [ ] tabRequiredFields = {
+                            error.getTitleField( )
+                        };
+                        SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_MANDATORY_FIELD, tabRequiredFields, SiteMessage.TYPE_STOP );
                     }
                     else
                     {
-                        Object[] tabRequiredFields = { error.getTitleField(  ), error.getErrorMessage(  ) };
-                        SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_DIRECTORY_ERROR,
-                            tabRequiredFields, SiteMessage.TYPE_STOP );
+                        Object [ ] tabRequiredFields = {
+                                error.getTitleField( ), error.getErrorMessage( )
+                        };
+                        SiteMessageService.setMessage( request, EditRecordConstants.MESSAGE_DIRECTORY_ERROR, tabRequiredFields, SiteMessage.TYPE_STOP );
                     }
                 }
 
                 // Put the map <idEntry, RecordFields> in the session
-                request.getSession(  )
-                       .setAttribute( EditRecordConstants.SESSION_EDIT_RECORD_LIST_SUBMITTED_RECORD_FIELDS,
-                    mapListRecordFields );
+                request.getSession( ).setAttribute( EditRecordConstants.SESSION_EDIT_RECORD_LIST_SUBMITTED_RECORD_FIELDS, mapListRecordFields );
 
                 return false;
             }
@@ -600,8 +590,7 @@ public class EditRecordService implements IEditRecordService
             return true;
         }
 
-        setSiteMessage( request, EditRecordConstants.MESSAGE_APP_ERROR, SiteMessage.TYPE_STOP,
-            request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
+        setSiteMessage( request, EditRecordConstants.MESSAGE_APP_ERROR, SiteMessage.TYPE_STOP, request.getParameter( EditRecordConstants.PARAMETER_URL_RETURN ) );
 
         return false;
     }
@@ -612,31 +601,28 @@ public class EditRecordService implements IEditRecordService
     @Override
     public void doChangeRecordState( EditRecord editRecord, Locale locale )
     {
-        ITask task = _taskService.findByPrimaryKey( editRecord.getIdTask(  ), locale );
-        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( editRecord.getIdTask(  ) );
+        ITask task = _taskService.findByPrimaryKey( editRecord.getIdTask( ), locale );
+        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( editRecord.getIdTask( ) );
 
         if ( ( task != null ) && ( config != null ) )
         {
-            State state = _stateService.findByPrimaryKey( config.getIdStateAfterEdition(  ) );
-            Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
+            State state = _stateService.findByPrimaryKey( config.getIdStateAfterEdition( ) );
+            Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
 
             if ( ( state != null ) && ( action != null ) )
             {
-                Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
+                Record record = getRecordFromIdHistory( editRecord.getIdHistory( ) );
 
                 // Update Resource
-                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( record.getIdRecord(  ),
-                        Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ) );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( record.getIdRecord( ), Record.WORKFLOW_RESOURCE_TYPE, action
+                        .getWorkflow( ).getId( ) );
                 resourceWorkflow.setState( state );
                 _resourceWorkflowService.update( resourceWorkflow );
-                WorkflowService.getInstance(  )
-                               .doProcessAutomaticReflexiveActions( record.getIdRecord(  ),
-                    Record.WORKFLOW_RESOURCE_TYPE, action.getStateAfter(  ).getId(  ),
-                    resourceWorkflow.getExternalParentId(  ), locale );
+                WorkflowService.getInstance( ).doProcessAutomaticReflexiveActions( record.getIdRecord( ), Record.WORKFLOW_RESOURCE_TYPE,
+                        action.getStateAfter( ).getId( ), resourceWorkflow.getExternalParentId( ), locale );
                 // if new state have action automatic
-                WorkflowService.getInstance(  )
-                               .executeActionAutomatic( record.getIdRecord(  ), Record.WORKFLOW_RESOURCE_TYPE,
-                    action.getWorkflow(  ).getId(  ), resourceWorkflow.getExternalParentId(  ) );
+                WorkflowService.getInstance( ).executeActionAutomatic( record.getIdRecord( ), Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow( ).getId( ),
+                        resourceWorkflow.getExternalParentId( ) );
             }
         }
     }
@@ -659,7 +645,7 @@ public class EditRecordService implements IEditRecordService
     @Override
     public boolean isRequestAuthenticated( HttpServletRequest request )
     {
-        return EditRecordRequestAuthenticatorService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
+        return EditRecordRequestAuthenticatorService.getRequestAuthenticator( ).isRequestAuthenticated( request );
     }
 
     /**
@@ -670,23 +656,23 @@ public class EditRecordService implements IEditRecordService
     {
         boolean bIsValid = false;
 
-        ITask task = _taskService.findByPrimaryKey( editRecord.getIdTask(  ), locale );
-        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( editRecord.getIdTask(  ) );
+        ITask task = _taskService.findByPrimaryKey( editRecord.getIdTask( ), locale );
+        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( editRecord.getIdTask( ) );
 
         if ( ( task != null ) && ( config != null ) )
         {
-            Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
+            Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
 
-            if ( ( action != null ) && ( action.getStateAfter(  ) != null ) )
+            if ( ( action != null ) && ( action.getStateAfter( ) != null ) )
             {
-                Record record = getRecordFromIdHistory( editRecord.getIdHistory(  ) );
+                Record record = getRecordFromIdHistory( editRecord.getIdHistory( ) );
 
                 // Update Resource
-                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( record.getIdRecord(  ),
-                        Record.WORKFLOW_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ) );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( record.getIdRecord( ), Record.WORKFLOW_RESOURCE_TYPE, action
+                        .getWorkflow( ).getId( ) );
 
-                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState(  ) != null ) &&
-                        ( resourceWorkflow.getState(  ).getId(  ) == action.getStateAfter(  ).getId(  ) ) )
+                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null )
+                        && ( resourceWorkflow.getState( ).getId( ) == action.getStateAfter( ).getId( ) ) )
                 {
                     bIsValid = true;
                 }

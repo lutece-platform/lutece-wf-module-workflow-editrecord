@@ -55,7 +55,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * TaskEditRecord
@@ -75,7 +74,7 @@ public class TaskEditRecord extends Task
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
     }
 
@@ -85,21 +84,19 @@ public class TaskEditRecord extends Task
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        String strMessage = request.getParameter( EditRecordConstants.PARAMETER_MESSAGE +
-                EditRecordConstants.UNDERSCORE + getId(  ) );
-        String[] listIdsEntry = request.getParameterValues( EditRecordConstants.PARAMETER_IDS_ENTRY +
-                EditRecordConstants.UNDERSCORE + getId(  ) );
+        String strMessage = request.getParameter( EditRecordConstants.PARAMETER_MESSAGE + EditRecordConstants.UNDERSCORE + getId( ) );
+        String [ ] listIdsEntry = request.getParameterValues( EditRecordConstants.PARAMETER_IDS_ENTRY + EditRecordConstants.UNDERSCORE + getId( ) );
 
         boolean bCreate = false;
-        List<EditRecordValue> listEditRecordValues = new ArrayList<EditRecordValue>(  );
+        List<EditRecordValue> listEditRecordValues = new ArrayList<EditRecordValue>( );
 
-        EditRecord editRecord = _editRecordService.find( nIdResourceHistory, getId(  ) );
+        EditRecord editRecord = _editRecordService.find( nIdResourceHistory, getId( ) );
 
         if ( editRecord == null )
         {
-            editRecord = new EditRecord(  );
+            editRecord = new EditRecord( );
             editRecord.setIdHistory( nIdResourceHistory );
-            editRecord.setIdTask( getId(  ) );
+            editRecord.setIdTask( getId( ) );
             bCreate = true;
         }
 
@@ -110,7 +107,7 @@ public class TaskEditRecord extends Task
                 if ( StringUtils.isNotBlank( strIdEntry ) && StringUtils.isNumeric( strIdEntry ) )
                 {
                     int nIdEntry = Integer.parseInt( strIdEntry );
-                    EditRecordValue editRecordValue = new EditRecordValue(  );
+                    EditRecordValue editRecordValue = new EditRecordValue( );
                     editRecordValue.setIdEntry( nIdEntry );
 
                     listEditRecordValues.add( editRecordValue );
@@ -135,8 +132,8 @@ public class TaskEditRecord extends Task
     // GET
 
     /**
-         * {@inheritDoc}
-         */
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, String> getTaskFormEntries( Locale locale )
     {
@@ -150,15 +147,15 @@ public class TaskEditRecord extends Task
     public String getTitle( Locale locale )
     {
         String strTitle = StringUtils.EMPTY;
-        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( getId(  ) );
+        TaskEditRecordConfig config = _taskEditRecordConfigService.findByPrimaryKey( getId( ) );
 
-        if ( ( config != null ) && ( config.getIdStateAfterEdition(  ) != DirectoryUtils.CONSTANT_ID_NULL ) )
+        if ( ( config != null ) && ( config.getIdStateAfterEdition( ) != DirectoryUtils.CONSTANT_ID_NULL ) )
         {
-            State state = _stateService.findByPrimaryKey( config.getIdStateAfterEdition(  ) );
+            State state = _stateService.findByPrimaryKey( config.getIdStateAfterEdition( ) );
 
             if ( state != null )
             {
-                strTitle = state.getName(  );
+                strTitle = state.getName( );
             }
         }
 
@@ -171,10 +168,10 @@ public class TaskEditRecord extends Task
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _editRecordService.removeByIdTask( getId(  ) );
-        _taskEditRecordConfigService.remove( getId(  ) );
+        _editRecordService.removeByIdTask( getId( ) );
+        _taskEditRecordConfigService.remove( getId( ) );
     }
 
     /**
@@ -183,6 +180,6 @@ public class TaskEditRecord extends Task
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        _editRecordService.removeByIdHistory( nIdHistory, getId(  ) );
+        _editRecordService.removeByIdHistory( nIdHistory, getId( ) );
     }
 }
