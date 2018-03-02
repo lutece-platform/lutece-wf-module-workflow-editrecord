@@ -524,7 +524,7 @@ public class EditRecordService implements IEditRecordService
 
         if ( record != null )
         {
-            String strUploadAction = DirectoryAsynchronousUploadHandler.getHandler(  ).getUploadAction( request );
+            String strActionRelatedToFile = DirectoryAsynchronousUploadHandler.getHandler(  ).getUploadAction( request );
             List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues(  ) );
             
             Map<Integer,Field> hashFields=DirectoryUtils.getMapFieldsOfListEntry(listEntriesToEdit, pluginDirectory) ;
@@ -542,8 +542,7 @@ public class EditRecordService implements IEditRecordService
                 }
                 catch ( DirectoryErrorException error )
                 {
-                    // Case if the user does not upload a file, then throw the error message
-                    if ( StringUtils.isBlank( strUploadAction ) )
+                    if ( StringUtils.isBlank( strActionRelatedToFile ) )
                     {
                         if ( error.isMandatoryError(  ) )
                         {
@@ -563,18 +562,14 @@ public class EditRecordService implements IEditRecordService
 
             record.setListRecordField( listRecordFields );
 
-            // Special case for upload fields : if no action is specified, a submit
-            // button associated with an upload might have been pressed :
-            if ( StringUtils.isNotBlank( strUploadAction ) )
+            if ( StringUtils.isNotBlank( strActionRelatedToFile ) )
             {
                 Map<String, List<RecordField>> mapListRecordFields = DirectoryUtils.buildMapIdEntryListRecordField( record );
 
-                // Upload the file
                 try
                 {
                     DirectoryAsynchronousUploadHandler.getHandler(  )
-                                                      .doUploadAction( request, strUploadAction, mapListRecordFields,
-                        record, pluginDirectory );
+                                                      .doUploadAction( request, strActionRelatedToFile, mapListRecordFields );
                 }
                 catch ( DirectoryErrorException error )
                 {
