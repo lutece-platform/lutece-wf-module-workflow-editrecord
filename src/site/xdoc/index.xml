@@ -1,12 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
 	<properties>
-		<title>Plugin</title>
+		<title>Module workflow editrecord</title>
 	</properties>
 	<body>
-		<section name="Plugin">
+		<section name="Module workflow editrecord">
 			<subsection name="Introduction">
+                <p>This module contains a workflow task to edit a record of a directory (from the <code>plugin-directory</code>). The front-office user accesses a page to edit the record, thanks to a link sent by email.
+                </p>
 			</subsection>
+            <subsection name="Usage">
+                <p><strong>Configure the workflow task</strong></p>
+                <p>The field <code>State after edition</code> corresponds to the target state after the front-office user has edited the record.
+                </p>
+                <p>The field <code>Default message</code> corresponds to the message displayed in the task form when the back-office user executes the action. 
+                The user can modify this message in the form. It is then displayed in the front-office edition page.
+                </p>
+
+                <p><strong>Execute an action when the record is edited</strong></p>
+                <p>After the submission of the edition by the front-office user, the process calls the first automatic workflow action whose initial state is the state defined in the configuration task.
+                </p>
+                <p>Thus, to execute a workflow action after the front-office user has submitted the edition of the record:
+                    <ul>
+                        <li>Create a state in the workflow. This state can be used only for this purpose.</li>
+                        <li>In the task configuration, use the created state in the field <code>State after edition</code>.</li>
+                        <li>Create an automatic action whose initial state is the created state and the final state is your wanted state.</li>
+                        <li>Add your wanted tasks in this action.</li>
+                    </ul>
+                </p>
+                <p>Here is an example:</p>
+                <p>States
+                    <ul>
+                        <li><code>Title</code>: In progress</li>
+                        <li><code>Title</code>: Waiting for edition</li>
+                        <li><code>Title</code>: Record edited</li>
+                    </ul>
+                    Actions
+                    <ul>
+                        <li><code>Title</code>: Ask for record edition. <code>States</code>: In progress -> Waiting for edition. <code>Automatic</code>: no.</li>
+                        <li><code>Title</code>: Edit record. <code>States</code>: Record edited -> In progress. <code>Automatic</code>: yes.</li>
+                    </ul>
+                    Tasks
+                    <ul>
+                        <li><code>Type</code>: Directory record edition. <code>Action</code>: Ask for record edition. <code>Configuration</code>: <code>State after edition</code> = Record edited</li>
+                        <li><code>Type</code>: as you want. <code>Action</code>: Edit record.</li>
+                    </ul>
+                </p>
+            </subsection>
 		</section>
 	</body>
 </document>

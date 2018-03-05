@@ -1,12 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-	<properties>
-		<title>Plugin</title>
-	</properties>
-	<body>
-		<section name="Plugin">
-			<subsection name="Introduction">
-			</subsection>
-		</section>
-	</body>
+    <properties>
+        <title>Module workflow editrecord</title>
+    </properties>
+    <body>
+        <section name="Module workflow editrecord">
+            <subsection name="Introduction">
+                <p>Ce module contient une tâche de workflow pour l'édition d'une fiche d'un annuaire (du <code>plugin-directory</code>). L'utilisateur front-office accède à une page pour éditer la fiche, grâce à un lien envoyé par email.
+                </p>
+            </subsection>
+            <subsection name="Utilisation">
+                <p><strong>Configurer la tâche de workflow</strong></p>
+                <p>Le champ <code>Etat de sortie</code> correspond à l'état cible après que l'utilisateur front-office a édité la fiche.
+                </p>
+                <p>Le champ <code>Message par défaut</code> correspond au message affiché dans le formulaire de la tâche quand l'utilisateur back-office exécute l'action.
+                L'utilisateur peut modifier ce message dans le formulaire. Il est ensuite affiché dans la page front-office d'édition de la fiche.
+                </p>
+
+                <p><strong>Executer une action quand la fiche est éditée</strong></p>
+                <p>Après la soumission de l'édition par l'utilisateur front-office, le traitement appelle la première action automatique du workflow dont l'état initial est l'état défini dans la configuration de la tâche.
+                </p>
+                <p>Par conséquent, pour exécuter une action du workflow après que l'utilisateur front-office a soumis l'édition de la fiche :
+                    <ul>
+                        <li>Créez un état dans le workflow. Cet état peut être utilisé uniquement pour ce but.</li>
+                        <li>Dans la configuration de la tâche, utilisez l'état créé dans le champ <code>Etat de sortie</code>.</li>
+                        <li>Créez une action automatique dont l'état initial est l'état créé and l'état final est l'état de votre choix.</li>
+                        <li>Ajoutez les tâches de votre choix dans cette action.</li>
+                    </ul>
+                </p>
+                <p>Voici un exemple :</p>
+                <p>Etats
+                    <ul>
+                        <li><code>Titre</code> : En cours</li>
+                        <li><code>Titre</code> : En attente d'édition</li>
+                        <li><code>Titre</code> : Fiche éditée</li>
+                    </ul>
+                    Actions
+                    <ul>
+                        <li><code>Titre</code> : Demander l'édition d'une fiche. <code>Etats</code> : En cours -> En attente d'édition. <code>Automatique</code> : non.</li>
+                        <li><code>Titre</code> : Editer la fiche. <code>Etats</code> : Fiche éditée -> En cours. <code>Automatique</code> : oui.</li>
+                    </ul>
+                    Tâches
+                    <ul>
+                        <li><code>Type</code> : Demande d'édition d'une fiche de directory. <code>Action</code> : Demander l'édition d'une fiche. <code>Configuration</code> : <code>Etat de sortie</code> = Fiche éditée</li>
+                        <li><code>Type</code> : de votre choix. <code>Action</code> : Editer la fiche.</li>
+                    </ul>
+                </p>
+            </subsection>
+        </section>
+    </body>
 </document>
