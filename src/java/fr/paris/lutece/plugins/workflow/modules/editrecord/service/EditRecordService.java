@@ -509,25 +509,25 @@ public class EditRecordService implements IEditRecordService
     public boolean doEditRecordData( HttpServletRequest request, EditRecord editRecord ) throws SiteMessageException
     {
         Plugin pluginDirectory = PluginService.getPlugin( DirectoryPlugin.PLUGIN_NAME );
-        
+
         Record record = getRecordFromIdHistory( editRecord.getIdHistory( ) );
 
         if ( record != null )
         {
             String strActionRelatedToFile = DirectoryAsynchronousUploadHandler.getHandler( ).getUploadAction( request );
-            
+
             EntryFilter filter = new EntryFilter( );
             filter.setIdDirectory( record.getDirectory( ).getIdDirectory( ) );
             List<IEntry> listAllEntries = EntryHome.getEntryList( filter, pluginDirectory );
-            
-            Map<Integer, Field> mapAllFields = DirectoryUtils.getMapFieldsOfListEntry( listAllEntries, pluginDirectory );            
+
+            Map<Integer, Field> mapAllFields = DirectoryUtils.getMapFieldsOfListEntry( listAllEntries, pluginDirectory );
 
             // At the beginning, contains fields to not edit, but is completed with all fields with DirectoryUtils.getDirectoryRecordFieldData
             List<RecordField> listRecordFields = getListRecordFieldsToNotEdit( request, record.getIdRecord( ), editRecord.getListEditRecordValues( ),
-            		mapAllFields );
-            
+                    mapAllFields );
+
             List<IEntry> listEntriesToEdit = getListEntriesToEdit( request, editRecord.getListEditRecordValues( ) );
-            
+
             for ( IEntry entry : listEntriesToEdit )
             {
                 try
