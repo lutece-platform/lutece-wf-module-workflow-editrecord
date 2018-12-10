@@ -40,6 +40,8 @@ import fr.paris.lutece.plugins.directory.business.EntryTypeDownloadUrl;
 import fr.paris.lutece.plugins.directory.business.EntryTypeHome;
 import fr.paris.lutece.plugins.directory.business.Field;
 import fr.paris.lutece.plugins.directory.business.IEntry;
+import fr.paris.lutece.plugins.directory.business.PhysicalFile;
+import fr.paris.lutece.plugins.directory.business.PhysicalFileHome;
 import fr.paris.lutece.plugins.directory.business.Record;
 import fr.paris.lutece.plugins.directory.business.RecordField;
 import fr.paris.lutece.plugins.directory.business.RecordFieldFilter;
@@ -392,6 +394,16 @@ public class EditRecordService implements IEditRecordService
             listRecordFieldsToNotEdit = RecordFieldHome.getRecordFieldSpecificList( listIdEntriesToNotEdit, nIdRecord, pluginDirectory, mapFieldEntry );
         }
 
+        // For each file in the not edit record field list, load the file
+        for ( RecordField field : listRecordFieldsToNotEdit )
+        {
+            if (  field.getFile( ) != null && field.getFile( ).getPhysicalFile().getValue( ) == null )
+            {
+                int nIdPhysicalFile = field.getFile( ).getPhysicalFile().getIdPhysicalFile( );
+                PhysicalFile phyFile = PhysicalFileHome.findByPrimaryKey( nIdPhysicalFile, pluginDirectory );
+                field.getFile().setPhysicalFile( phyFile );
+            }
+        }
         return listRecordFieldsToNotEdit;
     }
 
