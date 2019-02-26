@@ -33,13 +33,22 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.editrecord.service.taskinfo;
 
+import fr.paris.lutece.plugins.directory.business.Entry;
+import fr.paris.lutece.plugins.directory.business.IEntry;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecord;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.business.EditRecordValue;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordPlugin;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordService;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.service.EditRecordValueService;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.service.IEditRecordService;
+import fr.paris.lutece.plugins.workflow.modules.editrecord.service.IEditRecordValueService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.service.signrequest.EditRecordRequestAuthenticatorService;
 import fr.paris.lutece.plugins.workflow.modules.editrecord.util.constants.EditRecordConstants;
 import fr.paris.lutece.plugins.workflow.service.taskinfo.AbstractTaskInfoProvider;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.service.content.XPageAppService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
@@ -53,6 +62,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
+import net.sf.json.JSONObject;
 
 /**
  *
@@ -65,6 +75,9 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
     @Inject
     private IResourceHistoryService _resourceHistoryService;
 
+    private static final String MARK_EDIT_RECORD_URL = "edit_record_url";
+    private static final String MARK_EDIT_RECORD_MESSAGE = "edit_record_message";
+    private static final String MARK_EDIT_RECORD_ENTRIES = "edit_record_entries";
     /**
      * {@inheritDoc}
      */
@@ -80,7 +93,11 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
     @Override
     public String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request )
     {
-        String strInfo = StringUtils.EMPTY;
+        JSONObject jsonInfos = new JSONObject( );
+        String strInfoUrl = StringUtils.EMPTY;
+        String strInfoMsg = StringUtils.EMPTY;
+        String strInfoEntries = StringUtils.EMPTY;
+        
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
 
         if ( resourceHistory != null )
@@ -106,10 +123,27 @@ public class EditRecordTaskInfoProvider extends AbstractTaskInfoProvider
             url.addParameter( EditRecordConstants.PARAMETER_TIMESTAMP, strTimestamp );
             url.addParameter( EditRecordConstants.PARAMETER_URL_RETURN, AppPropertiesService.getProperty( EditRecordConstants.PROPERTY_URL_RETURN ) );
 
-            strInfo = url.getUrl( );
+            strInfoUrl = url.getUrl( );
         }
 
-        return strInfo;
+        IEditRecordService editRecordService = SpringContextService.getBean( EditRecordService.BEAN_SERVICE );
+        EditRecord editRecord = editRecordService.find( nIdHistory, nIdTask);
+        if ( editRecord != null ) strInfoMsg = editRecord.getMessage( );
+
+        List<IEntry> entries = editRecordService.getInformationListEntries( nIdHistory );
+        for (int i =0; entries != null && i < entries.size( ); i++ )
+        {
+            strInfoEntries += entries.get( i ).getTitle( ) ;
+            if (i < entries.size( ) -1 ) strInfoEntries += ", ";
+        }
+        if ( editRecord != null ) strInfoMsg = editRecord.getMessage( );
+
+
+        jsonInfos.accumulate( MARK_EDIT_RECORD_URL, strInfoUrl );
+        jsonInfos.accumulate( MARK_EDIT_RECORD_MESSAGE, strInfoMsg );
+        jsonInfos.accumulate( MARK_EDIT_RECORD_ENTRIES, strInfoEntries );
+
+        return jsonInfos.toString( );
     }
 
     /**
