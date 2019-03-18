@@ -43,6 +43,9 @@
 	<bean id="workflow-editrecord.editRecordTaskInfoProvider" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.taskinfo.EditRecordTaskInfoProvider"
 		p:taskType-ref="workflow-editrecord.taskTypeEditRecord" />
 	
+        <!-- Marker provider -->
+        <bean id="workflow-editrecord.editRecordMarkerProvider" class="fr.paris.lutece.plugins.workflow.modules.editrecord.service.provider.EditRecordMarkerProvider" />
+
 	<!-- SignRequest -->
 	<bean id="workflow-editrecord.hashService" class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
 	<bean id="workflow-editrecord.editRecordRequestAuthenticator" class="fr.paris.lutece.util.signrequest.RequestHashAuthenticator" >
